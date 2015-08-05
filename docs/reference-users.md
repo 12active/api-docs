@@ -16,47 +16,12 @@ Resources for session management and getting information about the currently log
             {
                 "links": {
                     "self": "/users",
-                    "login": "/users/login",
                     "user_detail": "/users/me",
                     "registered_activities": "/users/registrations",
                     "following_activities": "/users/followings",
                     "giving_activities": "/users/activities"
                 },
                 "data": {}
-            }
-
-## User authentication [/users/login]
-
-For now, authentication goes via Basic Auth.
-Every call to the api requires the users username and password.
-
-The credential is a base 64 encoded string containing `username:password`.
-I.e. `Authorization: Basic c3BvcnR5Z3VydTc4OmxldG1laW4=`.
-
-### Log a user in [POST]
-
-+ username (string)
-+ password (string)
-
-+ Request
-
-    + Headers
-
-            Authorization: (required, `Basic c3BvcnR5Z3VydTc4OmxldG1laW4=`) ... Base 64 encoded credentials
-
-+ Response 200 (application/json)
-
-    + Body
-
-            {
-                "links": {
-                    "self": "/users/login",
-                    "user_detail": "/users/me",
-                },
-                "data": {},
-                "meta": {
-                    "interface_type": "participant"
-                }
             }
 
 ## User item [/users/me]

@@ -8,6 +8,20 @@ to communicate about sport activities.
 
 The API follows the [json:api syntax](http://jsonapi.org/).
 
+## Authentication
+
+For now, authentication goes via Basic Auth.
+Full authentication is required for every call to the api, there are no session ids.
+
+By default, it requires the user's username and password.
+The credential is a base 64 encoded string containing `username:password`.
+I.e. `Authorization: Basic c3BvcnR5Z3VydTc4OmxldG1laW4=`.
+
+Users can also authenticate via Facebook by sending their oauth access token:
+I.e. `Authorization: Out2MoveFacebookLogin: access_token=xyz`.
+
+Testing for a successful login can be best done using the [/users/me call](/reference/users/user-item).
+
 ### Following links
 
 You'll be able to navigate through the api using links provided in each response.
