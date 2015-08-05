@@ -27,10 +27,28 @@ Resources for session management and getting information about the currently log
 ## User item [/users/me]
 
 + name
-+ credit_left ... for information only, as this is combined of multiple clubs
++ avatar
++ phone
 + activities_done
-+ activities_registered
++ last_activity_in_days
 + multiple_clubs
++ interface_type (trainer or participant)
+
+For participants, this can be extended with:
+
++ club
+    + credit_left
+    + subscription_name
+    + subscription_date_start
+    + subscription_date_end
+    + subscription_payment_due
+    + last_activity
+
+For trainers, this can be extended with:
+
++ club
+    + name
+    + logo
 
 ### View currently logged in user [GET]
 
@@ -46,11 +64,20 @@ Resources for session management and getting information about the currently log
                     "type": "user",
                     "id": 42,
                     "attributes": {
-                        "name": "Niels Groen",
-                        "credit_left": 12,
+                        "name": "Lode Claassen",
+                        "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                        "phone": "",
                         "activities_done": 32,
-                        "activities_registered": 2,
-                        "multiple_clubs": true
+                        "last_activity_in_days": 2,
+                        "multiple_clubs": false
+                        "club": {
+                            "credit_left": 12,
+                            "subscription_name": "Maandabonnement - onbeperkt",
+                            "subscription_date_start": "2015-02-11T00:00:00+0100",
+                            "subscription_date_end": "2016-02-01T00:00:00+0100",
+                            "subscription_payment_due": false,
+                            "last_activity": "2015-08-04T19:30:00+0100"
+                        }
                     },
                     "links": {
                         "registered_activities": "/users/registrations",
@@ -60,5 +87,57 @@ Resources for session management and getting information about the currently log
                 },
                 "meta": {
                     "interface_type": "participant"
+                }
+            }
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/users/me",
+                },
+                "data": {
+                    "type": "user",
+                    "id": 42,
+                    "attributes": {
+                        "name": "Lode Claassen",
+                        "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                        "phone": "",
+                        "activities_done": 2,
+                        "last_activity_in_days": 40,
+                        "multiple_clubs": false
+                    },
+                    "relationships": {
+                        "club": {
+                            "data": {
+                                "type": "club",
+                                "id": 42
+                            }
+                        }
+                    },
+                    "links": {
+                        "registered_activities": "/users/registrations",
+                        "following_activities": "/users/followings",
+                        "giving_activities": "/users/activities"
+                    }
+                },
+                "included": [
+                    {
+                        "type": "club",
+                        "id": 42,
+                        "attributes": {
+                            "name": "OUT!-Sport",
+                            "logo": "http://out2move-dev.s3-website-eu-west-1.amazonaws.com/content/icons/1/logo OUT! met url.png"
+                        },
+                        "links": {
+                            "self": "/clubs/42",
+                            "members": "/clubs/42/members"
+                        }
+                    }
+                ],
+                "meta": {
+                    "interface_type": "trainer"
                 }
             }
