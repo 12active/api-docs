@@ -115,3 +115,30 @@ For example, a participant with a payment due, see [participant details](/refere
 
 In the response, a corresponding `Content-Language` header is included.
 In case there is no i18n for the requested language, we'll pass English.
+
+### Push notifications
+
+For mobile apps, we can send push notifications to a user's device.
+If users don't allow to receive push notifications, they'll receive them via email.
+
+Right now we send notifications for new conversation messages and cancelled activities.
+Detailed info is at the description of those endpoints.
+Notifications are generally send to all members and trainers of a club.
+
+To be able to receive push notifications, you need to register the device.
+To make sure unauthorized users don't receive them, you need to unregister the device once the user logs out.
+See [device registration](/reference/users/user-device) and [notification testing](/reference/users/test-notification) for details.
+
+All push notifications include additional metadata:
+
++ title
++ type
++ *_id
+
+For example:
+
+        {
+            "title": "Nieuw bericht",
+            "type": "new-message",
+            "conversation_id": 42
+        }
