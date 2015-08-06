@@ -94,6 +94,8 @@ For trainers, this can be extended with:
                 }
             }
 
+### View currently logged in trainer [GET]
+
 + Response 200 (application/json)
 
     + Body
@@ -153,10 +155,6 @@ This allows for push notifications to be sent to the user's device.
 
 Right now only Android and iOS devices are recognized.
 
-+ Parameters
-    + device (required, string, `Android`) ... Type of the device: either `Android` or `iOS`
-    + identifier (required, string, `Zan63Ru7ABuk4nuwRus6ubr5SPuzesab...`) ... The id of the device
-
 ### (Re-)Activate a device [PUT]
 
 Using PUT activates the device, or marks it as still active when already activated.
@@ -166,11 +164,14 @@ We allow multiple devices per user but only send push notifications to the lates
 To facilitate this, call this endpoint every time the user (re-)opens the app.
 The device which opened the app the last will receive the push notifications.
 
++ device (required, string, `Android`) ... Type of the device: either `Android` or `iOS`
++ identifier (required, string, `Zan63Ru7ABuk4nuwRus6ubr5SPuzesab`) ... The id of the device
+
 + Request (application/json)
 
             {
                 "device": "Android",
-                "identifier": "Zan63Ru7ABuk4nuwRus6ubr5SPuzesab..."
+                "identifier": "Zan63Ru7ABuk4nuwRus6ubr5SPuzesab"
             }
 
 + Response 204 (application/json)
@@ -184,11 +185,14 @@ It would be good to offer users a way to disable notifications while logged in a
 
 After de-activating, the user will continue to receive notifications via email.
 
++ device (required, string, `Android`) ... Type of the device: either `Android` or `iOS`
++ identifier (required, string, `Zan63Ru7ABuk4nuwRus6ubr5SPuzesab`) ... The id of the device
+
 + Request (application/json)
 
             {
                 "device": "Android",
-                "identifier": "Zan63Ru7ABuk4nuwRus6ubr5SPuzesab..."
+                "identifier": "Zan63Ru7ABuk4nuwRus6ubr5SPuzesab"
             }
 
 + Response 204 (application/json)
@@ -199,13 +203,12 @@ Send a push notification to the [user's registered device](/reference/users/user
 
 This is mainly meant for development purposes.
 
-+ Parameters
-    + type (optional, string, `new-message`) ... Type of the message: one of `test`, `new-message`, `cancelled-activity`, `restored-activity`
-
 ### Send a push notification as test [POST]
 
 You'll receive an empty response body from the API, and the push notification at the device.
 Note this only works if you registered the user's device.
+
++ type (optional, string, `new-message`) ... Type of the message: one of `test`, `new-message`, `cancelled-activity`, `restored-activity`
 
 + Request (application/json)
 

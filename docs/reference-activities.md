@@ -184,8 +184,6 @@ If `variant` is set to `full`, it also contains:
 
 ### List all activities [GET]
 
-+ Request normal
-
 + Response 200 (application/json)
 
     + Body
@@ -219,11 +217,9 @@ If `variant` is set to `full`, it also contains:
                     ]
             }
 
-+ Request full
+### List all activities with full details [GET]
 
-    + Parameters
-    
-        + variant: `full`
++ variant: `full`
 
 + Response 200 (application/json)
 
