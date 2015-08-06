@@ -47,7 +47,7 @@ If `variant` is set to `full`, data contains all elements from the [detail call]
     + title (string)
     + lat
     + lng
-+ default_tag
++ category
 + cancelled
 
 + Parameters
@@ -78,7 +78,7 @@ If `variant` is set to `full`, data contains all elements from the [detail call]
                                     "lat": 52.294156,
                                     "lng": 4.823620
                                 },
-                                "default_tag": "Crossrunning",
+                                "category": "Crossrunning",
                                 "cancelled": false
                             },
                             "links": {
@@ -86,7 +86,12 @@ If `variant` is set to `full`, data contains all elements from the [detail call]
                                 "registration": "/activities/42/registration"
                             }
                         }
-                    ]
+                    ],
+                "meta": {
+                    "endpoints": {
+                        "registered_activities": "/users/registrations"
+                    }
+                }
             }
 
 ## Following activities collection [/users/followings{?variant}]
@@ -103,7 +108,7 @@ This only shows activities up to two weeks in the future.
     + title (string)
     + lat
     + lng
-+ default_tag
++ category
 + cancelled
 
 + Parameters
@@ -134,7 +139,7 @@ This only shows activities up to two weeks in the future.
                                     "lat": 52.294156,
                                     "lng": 4.823620
                                 },
-                                "default_tag": "Crossrunning",
+                                "category": "Crossrunning",
                                 "cancelled": false
                             },
                             "links": {
@@ -142,12 +147,19 @@ This only shows activities up to two weeks in the future.
                                 "registration": "/activities/42/registration"
                             }
                         }
-                    ]
+                    ],
+                "meta": {
+                    "endpoints": {
+                        "following_activities": "/users/followings"
+                    }
+                }
             }
 
-## Giving activities collection [/users/activities]
+## Giving activities collection [/users/activities{?variant}]
 
 Activities you - as the trainer - give to others.
+
+If `variant` is set to `full`, data contains all elements from the [detail call](/reference/activities/activity-item).
 
 This might include activities given by your club instead of only activities given by you personally.
 
@@ -159,11 +171,16 @@ This only shows activities up to two weeks in the future.
     + title (string)
     + lat
     + lng
-+ default_tag
++ category
 + cancelled
+
+If `variant` is set to `full`, it also contains:
+
 + participants
 
 ### List all activities [GET]
+
++ Request normal
 
 + Response 200 (application/json)
 
@@ -187,15 +204,67 @@ This only shows activities up to two weeks in the future.
                                     "lat": 52.294156,
                                     "lng": 4.823620
                                 },
-                                "default_tag": "Crossrunning",
+                                "category": "Crossrunning",
                                 "cancelled": false
                             },
                             "links": {
                                 "self": "/activities/42",
+                                "participants": "/activities/42/participants"
+                            }
+                        }
+                    ]
+            }
+
++ Request full
+
+    + Parameters
+    
+        + variant: `full`
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/activities",
+                    "activity_detail": "/activities/{activity_id}",
+                },
+                "data":
+                    [
+                        {
+                            "type": "activity",
+                            "id": 42,
+                            "attributes": {
+                                "title": "Turbo bootcamp",
+                                "date": "2015-04-19T19:00:00+01:00",
+                                "location": {
+                                    "title": "Amsterdamse bos, Amsterdam",
+                                    "lat": 52.294156,
+                                    "lng": 4.823620
+                                },
+                                "category": "Crossrunning",
+                                "cancelled": false,
+                                "description": "We verzamelen bij de ingang van het Clingendaelse bos. Dit is waar de Wassenaarsweg kruist met de laan van Clingendael.",
+                                "tags": [
+                                    "Buiten",
+                                    "Intensief",
+                                    "Laagdrempelig"
+                                ],
+                                "subscription": true
+                            },
+                            "relationships": {
+                                "club": {
+                                    "data": { "type": "club", "id": 42 }
+                                },
                                 "participants": {
-                                    "related": "/activities/42/participants",
-                                    "linkage": { "type": "user", "id": [42,24,44,22] }
+                                    "links": { "related": "/activities/42/participants" },
+                                    "data": { "type": "user", "id": [ 42, 24 ] }
                                 }
+                            },
+                            "links": {
+                                "self": "/activities/42",
+                                "registration": "/activities/42/registration"
                             }
                         }
                     ]
@@ -206,17 +275,17 @@ This only shows activities up to two weeks in the future.
 An activity object has the following attributes:
 
 + title (string)
-+ description (string)
-+ cost (optional, string) ... "credit" or "subscription"
 + date (in ISO 8601 format)
 + location
     + title (string)
     + lat
     + lng
-+ default_tag
++ category
++ cancelled
++ description (string)
 + tags ... array of tags
     + title (string)
-+ cancelled
++ subscription
 + trainer
     + type
     + id
@@ -227,7 +296,7 @@ An activity object has the following attributes:
     + type
     + ids
 
-If cost is null, a link should be provided to the website to arrange payment.
+If subscription is false, a link is provided to the website to arrange payment.
 
 + Parameters
     + activity_id (required, number, `42`) ... ID of the Activity
@@ -249,37 +318,38 @@ If cost is null, a link should be provided to the website to arrange payment.
                     "id": 42,
                     "attributes": {
                         "title": "Turbo bootcamp",
-                        "description": "Trailrunning is harlopen in de natuur. ...",
-                        "cost": "credit",
                         "date": "2015-04-19T19:00:00+01:00",
                         "location": {
                             "title": "Amsterdamse bos, Amsterdam",
                             "lat": 52.294156,
                             "lng": 4.823620
                         },
-                        "default_tag": "Crossrunning",
-                        "all_tags": [
+                        "category": "Crossrunning",
+                        "cancelled": false,
+                        "description": "Trailrunning is harlopen in de natuur. ...",
+                        "tags": [
                             "Crossrunning",
                             "Hardlopen",
                             "Bootcamp",
                             "Bootcamp & fitness"
                         ],
-                        "cancelled": false
+                        "subscription": true
                     },
-                    "links": {
-                        "self": "/activities/42",
+                    "relationships": {
                         "trainer": {
-                            "related": "/trainers/42",
-                            "linkage": { "type": "user", "id": 42 }
+                            "data": { "type": "user", "id": 42 }
                         },
                         "club": {
-                            "related": "/clubs/42",
-                            "linkage": { "type": "club", "id": 42 }
+                            "data": { "type": "club", "id": 42 }
                         },
                         "participants": {
-                            "related": "/activities/42/participants",
-                            "linkage": { "type": "user", "id": [42,24,44,22] }
+                            "links": { "related": "/activities/43154/participants" },
+                            "data": { "type": "user", "id": [ 42, 24 ] }
                         }
+                    },
+                    "links": {
+                        "self": "/activities/43154",
+                        "registration": "/activities/43154/registration"
                     }
                 },
                 "included": [
@@ -298,14 +368,20 @@ If cost is null, a link should be provided to the website to arrange payment.
                         "type": "club",
                         "id": 42,
                         "attributes": {
-                            "name": "Calandfit",
-                            "logo": "calandfit.png"
+                            "name": "OUT!-Sport",
+                            "logo": "https://dxltue5g50eu3.cloudfront.net/content/icons/1/logo%20OUT!%20met%20url.png"
                         },
                         "links": {
                             "self": "/clubs/42"
                         }
                     }
-                ]
+                ],
+                "meta": {
+                    "endpoints": {
+                        "participants": "/activities/43154/participants",
+                        "registration": "/activities/43154/registration"
+                    }
+                }
             }
 
 ## Activity registration [/activities/{activity_id}/registration]

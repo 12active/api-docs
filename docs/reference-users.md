@@ -129,7 +129,7 @@ For trainers, this can be extended with:
                         "id": 42,
                         "attributes": {
                             "name": "OUT!-Sport",
-                            "logo": "http://out2move-dev.s3-website-eu-west-1.amazonaws.com/content/icons/1/logo OUT! met url.png"
+                            "logo": "https://dxltue5g50eu3.cloudfront.net/content/icons/1/logo%20OUT!%20met%20url.png"
                         },
                         "links": {
                             "self": "/clubs/42",
