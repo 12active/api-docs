@@ -8,7 +8,17 @@ to communicate about sport activities.
 
 The API follows the [json:api syntax](http://jsonapi.org/).
 
-## Authentication
+All endpoints share the same base `https://www.out2move.nl/api`.
+
+## Client identification
+
+Clients need their app registered to be able to use the API.
+Upon registering you'll receive a `client_id` and `client_secret`.
+
+You make calls by adding both as url parameters.
+I.e. `GET /users/me?client_id=foo&client_secret=bar`.
+
+## User authentication
 
 For now, authentication goes via Basic Auth.
 Full authentication is required for every call to the api, there are no session ids.
