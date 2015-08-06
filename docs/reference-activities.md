@@ -394,6 +394,12 @@ Registering to an activity shows you'll be joining the activity.
 The activity will be added to your registered activities collection.
 It tells the trainer you want to join the activity.
 
+If an activity gets cancelled, we'll send notifications to all registered users.
+These notifications come via email and as push notification via a user's device
+(if they [registered for push notifications](/reference/users/user-device).)
+
+Note that right now we also send this notification to all non-registered members of the club.
+
 + Parameters
     + activity_id (required, number, `42`) ... ID of the Activity
 
