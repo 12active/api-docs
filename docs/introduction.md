@@ -99,11 +99,3 @@ For example, a participant with a payment due, see [participant details](/refere
 
 In the response, a corresponding `Content-Language` header is included.
 In case there is no i18n for the requested language, we'll pass English.
-
-### Open questions
-
-- do we offer a collection of all trainers? (from clubs you're member of)
-    this might give a performance boost to clients
-    but if it changes too often, it is useless
-    as the trainer information is not requested that often, it is not such a big deal
-    by including the essentials (just as for clubs) the user will need it less
