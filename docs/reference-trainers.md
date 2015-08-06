@@ -37,6 +37,8 @@ Information about the trainer of an activity.
 + club
     + name
     + logo
++ activities
+    + id
 
 + Parameters
     + user_id (required, number, `42`) ... ID of the Trainer
@@ -49,27 +51,29 @@ Information about the trainer of an activity.
 
             {
                 "links": {
-                    "self": "/trainers/42",
+                    "self": "/trainers/42"
                 },
                 "data": {
                     "type": "user",
                     "id": 42,
                     "attributes": {
-                        "name": "Pavlov van Beerkoop",
-                        "avatar": "pavlov.jpg",
-                        "phone": "06 123 456 78",
-                        "email": "pavlov@beerkooptraining.nl",
-                        "introduction": "Trailrunning is hardlopen in de natuur. ..."
+                        "name": "Vincent Van den Tol",
+                        "avatar": "https://dxltue5g50eu3.cloudfront.net/content/profile/1/558077f02c968_photo.JPG",
+                        "phone": "",
+                        "email": "vincent@alsvanzelf.nl",
+                        "introduction": ""
                     },
-                    "links": {
-                        "self": "/trainers/42",
+                    "relationships": {
                         "club": {
-                            "related": "/clubs/42",
-                            "linkage": { "type": "club", "id": 42 }
+                            "links": { "related": "/club/42" },
+                            "data": { "type": "club", "id": 42 }
                         },
                         "activities": {
-                            "linkage": { "type": "activity", "id": [42,24,44,22] }
+                            "data": { "type": "activity", "id": [ 42, 24 ] }
                         }
+                    },
+                    "links": {
+                        "self": "/trainers/42"
                     }
                 },
                 "included": [
@@ -77,8 +81,8 @@ Information about the trainer of an activity.
                         "type": "club",
                         "id": 42,
                         "attributes": {
-                            "name": "Calandfit",
-                            "logo": "calandfit.png"
+                            "name": "OUT!-Sport",
+                            "logo": "https://dxltue5g50eu3.cloudfront.net/content/icons/1/logo%20OUT!%20met%20url.png"
                         },
                         "links": {
                             "self": "/clubs/42"

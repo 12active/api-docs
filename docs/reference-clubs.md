@@ -31,6 +31,8 @@ Information about the club of an activity.
 
 + name
 + logo
++ activities
+    + id
 
 + Parameters
     + club_id (required, number, `42`) ... ID of the Club
@@ -43,21 +45,23 @@ Information about the club of an activity.
 
             {
                 "links": {
-                    "self": "/clubs/42",
-                    "members": "/clubs/{club_id}/members",
+                    "self": "/clubs/42/"
                 },
                 "data": {
                     "type": "club",
                     "id": 42,
                     "attributes": {
-                        "name": "Calandfit",
-                        "logo": "calandfit.png"
+                        "name": "OUT!-Sport",
+                        "logo": "https://dxltue5g50eu3.cloudfront.net/content/icons/1/logo%20OUT!%20met%20url.png"
+                    },
+                    "relationships": {
+                        "activities": {
+                            "data": { "type": "activity", "id": [ 42, 24 ] }
+                        }
                     },
                     "links": {
-                        "self": "/clubs/42",
-                        "activities": {
-                            "linkage": { "type": "activity", "id": [42,24,44,22] }
-                        }
+                        "self": "/clubs/42/",
+                        "members": "/clubs/42/members"
                     }
                 }
             }
@@ -68,7 +72,14 @@ This is only available for trainers.
 
 + name
 + avatar
-+ subscription_payment_due
++ phone
++ club
+    + credit_left
+    + subscription_name
+    + subscription_date_start
+    + subscription_date_end
+    + subscription_payment_due
+    + last_activity
 
 + Parameters
     + club_id (required, number, `42`) ... ID of the Club
@@ -81,8 +92,7 @@ This is only available for trainers.
 
             {
                 "links": {
-                    "self": "/club/42/members"
-                    "club_details": "/club/42"
+                    "self": "/clubs/42/members"
                 },
                 "data":
                     [
@@ -90,12 +100,20 @@ This is only available for trainers.
                             "type": "user",
                             "id": 42,
                             "attributes": {
-                                "name": "Niels Groen",
-                                "avatar": "sportyguru78.jpg",
-                                "subscription_payment_due": false,
+                                "name": "Lode Claassen",
+                                "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                                "phone": "",
+                                "club": {
+                                    "credit_left": 12,
+                                    "subscription_name": "Maandabonnement - onbeperkt",
+                                    "subscription_date_start": "2015-02-11T00:00:00+0100",
+                                    "subscription_date_end": "2016-02-01T00:00:00+0100",
+                                    "subscription_payment_due": false,
+                                    "last_activity": "2015-08-04T19:30:00+0100"
+                                }
                             },
                             "links": {
-                                "self": "/activities/42/members/42"
+                                "self": "/clubs/42/members/42"
                             }
                         }
                     ]
@@ -134,22 +152,20 @@ The trainer can then register them to the activity and mark their presence.
                     "type": "user",
                     "id": 42,
                     "attributes": {
-                        "name": "Niels Groen",
-                        "avatar": "sportyguru78.jpg",
-                        "phone": "06 - 12 34 56 78",
-                        "subscription_payment_due": false,
-                        "subscription_credits_left": 9,
-                        "subscription_start": "2015-05-12",
-                        "subscription_end": "2015-06-12",
-                        "subscription_method": "Abonnement",
+                        "name": "Lode Claassen",
+                        "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                        "phone": "",
+                        "club": {
+                            "credit_left": 12,
+                            "subscription_name": "Maandabonnement - onbeperkt",
+                            "subscription_date_start": "2015-02-11T00:00:00+0100",
+                            "subscription_date_end": "2016-02-01T00:00:00+0100",
+                            "subscription_payment_due": false,
+                            "last_activity": "2015-08-04T19:30:00+0100"
+                        }
                     },
                     "links": {
-                        "self": "/activities/42/members/42"
-                    }
-                },
-                "meta": {
-                    "messages": {
-                        "subscription_payment_due": "Betalingsachterstand"
+                        "self": "/clubs/42/members/42"
                     }
                 }
             }
@@ -159,12 +175,13 @@ The trainer can then register them to the activity and mark their presence.
 + name
 + avatar
 + phone
-+ subscription_payment_due
-+ subscription_credits_left
-+ subscription_start
-+ subscription_end
-+ subscription_method
-+ subscription_club
++ club
+    + credit_left
+    + subscription_name
+    + subscription_date_start
+    + subscription_date_end
+    + subscription_payment_due
+    + last_activity
 
 + Parameters
     + club_id (required, number, `42`) ... ID of the Club
@@ -184,22 +201,20 @@ The trainer can then register them to the activity and mark their presence.
                     "type": "user",
                     "id": 42,
                     "attributes": {
-                        "name": "Niels Groen",
-                        "avatar": "sportyguru78.jpg",
-                        "phone": "06 - 12 34 56 78",
-                        "subscription_payment_due": false,
-                        "subscription_credits_left": 9,
-                        "subscription_start": "2015-05-12",
-                        "subscription_end": "2015-06-12",
-                        "subscription_method": "Abonnement",
+                        "name": "Lode Claassen",
+                        "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                        "phone": "",
+                        "club": {
+                            "credit_left": 12,
+                            "subscription_name": "Maandabonnement - onbeperkt",
+                            "subscription_date_start": "2015-02-11T00:00:00+0100",
+                            "subscription_date_end": "2016-02-01T00:00:00+0100",
+                            "subscription_payment_due": true,
+                            "last_activity": "2015-08-04T19:30:00+0100"
+                        }
                     },
                     "links": {
-                        "self": "/activities/42/members/42"
-                    }
-                },
-                "meta": {
-                    "messages": {
-                        "subscription_payment_due": "Betalingsachterstand"
+                        "self": "/clubs/42/members/42"
                     }
                 }
             }
