@@ -1,0 +1,1684 @@
+FORMAT: 1A
+HOST: http://docs.out2move.apiary.io/
+
+# Out2Move
+
+Out2Move offers an API allowing sports trainers an participants
+to communicate about sport activities.
+
+The API follows the [json:api syntax](http://jsonapi.org/).
+
+All endpoints share the same base `https://www.out2move.nl/api`.
+
+### Client identification
+
+Clients need their app registered to be able to use the API.
+Upon registering you'll receive a `client_id` and `client_secret`.
+
+You make calls by adding both as url parameters.
+I.e. `GET /users/me?client_id=foo&client_secret=bar`.
+
+### User authentication
+
+For now, authentication goes via Basic Auth.
+Full authentication is required for every call to the api, there are no session ids.
+
+By default, it requires the user's username and password.
+The credential is a base 64 encoded string containing `username:password`.
+I.e. `Authorization: Basic c3BvcnR5Z3VydTc4OmxldG1laW4=`.
+
+Users should authenticate via Facebook if they signed up at Out2Move using Facebook.
+Clients are responsible for handling oauth with Facebook using Out2Move provided app info.
+After handling oauth, the user should be checked at Out2Move by sending their oauth access token.
+I.e. `Authorization: Out2MoveFacebookLogin: access_token=xyz`.
+
+Note right now users can only use one login method, either username/password *or* Facebook.
+This depends on how they signed up at Out2Move.
+
+As full authentication is needed for every call, there is no specific login endpoint.
+Testing for a successful login can be best done using the [/users/me call](/reference/users/user-item).
+
+### Following links
+
+You'll be able to navigate through the api using links provided in each response.
+It is recommend to follow the `links` values to retrieve resources instead of constructing your own URLs.
+This keeps the client decoupled from implementation details.
+
+### Standard attributes
+
+Each response can contain the following attributes:
+
++ `links` ... array of links
+    + `self` ... link to the resource just requested
+                 this may be a dynamic url for collections and the like
+                 i.e. for an `/featured-activity-of-the-day` endpoint
+                 as apposed to `data.links.self` which gives the exact same resource
+
++ `data` ... object, or array of objects
+    + `type` ... the type of resource, i.e. `activity`
+    + `id`
+    + `attributes`
+        + primary data
+    + `relationships`
+        + some related resource
+            + `links`
+                + `related` ... link to the related resource, i.e.: `/author/{id}`
+            + `data` ... info to find back resources in the `included` array
+                + `type`
+                + `id` ... int or array of ints
+    + `links`
+        + `self` ... link to the resource just requested, i.e.: `/endpoint/{id}`
+        + more links ... linking to related resources
+                         often going lower or higher in the endpoint structure
+
++ `included` ... array of objects
+    + `type`
+    + `id`
+    + `attributes`
+        + primary data
+    + `links`
+        + `self` ... link to this resource's full data
+
++ `meta` ... object
+    + non primary data
+
+You can read more about the structure in the [json:api specification](http://jsonapi.org/).
+
+### Possible status codes
+
++ ok (200)
++ created (201)
++ no_content (204)
++ bad_request (400)
++ unauthorized (401)
++ forbidden (403)
++ not_found (404)
++ method_not_allowed (405)
++ unprocessable_entity (422)
++ internal_server_error (500)
+
+### Versioning
+
+Versioning is optional. By default, you'll get the most recent version of the api specificiation.
+
+For production environments, it is recommended to request a specific version.
+To do so, send an `Accept` header specifying the version.
+
+`application/vnd.api+json.v1`
+
+If you want to provide an `Accept` header without versioning, you can use
+`application/vnd.api+json` or just plain `application/json`.
+
+### Internationalization
+
+We accept the `Accept-Language` header to send along i18n'd messages.
+This happens mostly for errors and in some specific error-alike situations.
+For example, a participant with a payment due, see [participant details](/reference/participants/activity-participant).
+
+In the response, a corresponding `Content-Language` header is included.
+In case there is no i18n for the requested language, we'll pass English.
+
+### Push notifications
+
+For mobile apps, we can send push notifications to a user's device.
+If users don't allow to receive push notifications, they'll receive them via email.
+
+Right now we send notifications for new conversation messages and cancelled activities.
+Detailed info is at the description of those endpoints.
+Notifications are generally send to all members and trainers of a club.
+
+To be able to receive push notifications, you need to register the device.
+To make sure unauthorized users don't receive them, you need to unregister the device once the user logs out.
+See [device registration](/reference/users/user-device) and [notification testing](/reference/users/test-notification) for details.
+
+All push notifications include additional metadata:
+
++ title
++ type
++ *_id
+
+For example:
+
+        {
+            "title": "Nieuw bericht",
+            "type": "new-message",
+            "conversation_id": 42
+        }
+
+# API Root [/]
+
+Following links begins with the root endpoint `/`.
+The response contains all starting endpoints to explore.
+
+## Get possible endpoints [GET]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/"
+                },
+                "data": [],
+                "meta": {
+                    "endpoints": {
+                        "users_url": "/users",
+                        "activities_url": "/activities",
+                        "trainers_url": "/trainers",
+                        "clubs_url": "/clubs",
+                        "conversations_url": "/conversations"
+                    }
+                }
+            }
+
+# Group Users
+
+Resources for session management and getting information about the currently logged in user.
+
+## User endpoints [/users]
+
+## Get possible endpoints [GET]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/users"
+                },
+                "data": [],
+                "meta": {
+                    "endpoints": {
+                        "user_detail": "/users/me",
+                        "registered_activities": "/users/registrations",
+                        "following_activities": "/users/followings",
+                        "giving_activities": "/users/activities"
+                    }
+                }
+            }
+
+## User item [/users/me]
+
++ name
++ avatar
++ phone
++ activities_done
++ last_activity_in_days
++ multiple_clubs
++ interface_type (trainer or participant)
+
+For participants, this can be extended with:
+
++ club
+    + credit_left
+    + subscription_name
+    + subscription_date_start
+    + subscription_date_end
+    + subscription_payment_due
+    + last_activity
+
+For trainers, this can be extended with:
+
++ club
+    + name
+    + logo
+
+### View currently logged in user [GET]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/users/me",
+                },
+                "data": {
+                    "type": "user",
+                    "id": 42,
+                    "attributes": {
+                        "name": "Lode Claassen",
+                        "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                        "phone": "",
+                        "activities_done": 32,
+                        "last_activity_in_days": 2,
+                        "multiple_clubs": false
+                        "club": {
+                            "credit_left": 12,
+                            "subscription_name": "Maandabonnement - onbeperkt",
+                            "subscription_date_start": "2015-02-11T00:00:00+0100",
+                            "subscription_date_end": "2016-02-01T00:00:00+0100",
+                            "subscription_payment_due": false,
+                            "last_activity": "2015-08-04T19:30:00+0100"
+                        }
+                    },
+                    "links": {
+                        "registered_activities": "/users/registrations",
+                        "following_activities": "/users/followings",
+                        "giving_activities": "/users/activities"
+                    }
+                },
+                "meta": {
+                    "interface_type": "participant"
+                }
+            }
+
+### View currently logged in trainer [GET]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/users/me",
+                },
+                "data": {
+                    "type": "user",
+                    "id": 42,
+                    "attributes": {
+                        "name": "Lode Claassen",
+                        "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                        "phone": "",
+                        "activities_done": 2,
+                        "last_activity_in_days": 40,
+                        "multiple_clubs": false
+                    },
+                    "relationships": {
+                        "club": {
+                            "data": {
+                                "type": "club",
+                                "id": 42
+                            }
+                        }
+                    },
+                    "links": {
+                        "registered_activities": "/users/registrations",
+                        "following_activities": "/users/followings",
+                        "giving_activities": "/users/activities"
+                    }
+                },
+                "included": [
+                    {
+                        "type": "club",
+                        "id": 42,
+                        "attributes": {
+                            "name": "OUT!-Sport",
+                            "logo": "https://dxltue5g50eu3.cloudfront.net/content/icons/1/logo%20OUT!%20met%20url.png"
+                        },
+                        "links": {
+                            "self": "/clubs/42",
+                            "members": "/clubs/42/members"
+                        }
+                    }
+                ],
+                "meta": {
+                    "interface_type": "trainer"
+                }
+            }
+
+## User device [/users/device]
+
+(De-)Activating a mobile device for the current user.
+This allows for push notifications to be sent to the user's device.
+
+Right now only Android and iOS devices are recognized.
+
+### Activate/re-activate a device [PUT]
+
+Using PUT activates the device, or marks it as still active when already activated.
+Use this when logging in after asking the users permission.
+
+We allow multiple devices per user but only send push notifications to the latest one.
+To facilitate this, call this endpoint every time the user (re-)opens the app.
+The device which opened the app the last will receive the push notifications.
+
++ device (required, string, `Android`) ... Type of the device: either `Android` or `iOS`
++ identifier (required, string, `Zan63Ru7ABuk4nuwRus6ubr5SPuzesab`) ... The id of the device
+
++ Request (application/json)
+
+            {
+                "device": "Android",
+                "identifier": "Zan63Ru7ABuk4nuwRus6ubr5SPuzesab"
+            }
+
++ Response 204 (application/json)
+
+### De-activate a device [DELETE]
+
+Using DELETE de-activates the device, stopping push notifications.
+Use this when logging out of the app to allow multiple users using a single device.
+
+It would be good to offer users a way to disable notifications while logged in as well.
+
+After de-activating, the user will continue to receive notifications via email.
+
++ device (required, string, `Android`) ... Type of the device: either `Android` or `iOS`
++ identifier (required, string, `Zan63Ru7ABuk4nuwRus6ubr5SPuzesab`) ... The id of the device
+
++ Request (application/json)
+
+            {
+                "device": "Android",
+                "identifier": "Zan63Ru7ABuk4nuwRus6ubr5SPuzesab"
+            }
+
++ Response 204 (application/json)
+
+## Test notification [/users/testnotification]
+
+Send a push notification to the [user's registered device](/reference/users/user-device).
+
+This is mainly meant for development purposes.
+
+### Send a push notification as test [POST]
+
+You'll receive an empty response body from the API, and the push notification at the device.
+Note this only works if you registered the user's device.
+
++ type (optional, string, `new-message`) ... Type of the message: one of `test`, `new-message`, `cancelled-activity`, `restored-activity`
+
++ Request (application/json)
+
+            {
+                "type": "new-message"
+            }
+
++ Response 204 (application/json)
+
+# Group Activities
+
+Resources for showing activities and participant registrations.
+
+### Format of collection endpoints
+
+All activity collection endpoints follow the same format.
+
+They only show activities which start today or in a future day.
+Activities which already took place this day, are still listed.
+Activities are sorted ascending, with earliest date first.
+
+Right now, all activity collections have a relation to the user in some way.
+In the future, there will be endpoints for activities based on location or type.
+
+## Activity endpoints [/activities]
+
+## Get possible endpoints [GET]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/activities"
+                },
+                "data": [],
+                "meta": {
+                    "endpoints": {
+                        "activity_detail": "/activities/{activity_id}",
+                        "registered_activities": "/users/registrations",
+                        "following_activities": "/users/followings",
+                        "giving_activities": "/users/activities"
+                    }
+                }
+            }
+
+## Registered activities collection [/users/registrations{?variant}]
+
+Activities you - as a participant - planned to join or have joined.
+
+If `variant` is set to `full`, data contains all elements from the [detail call](/reference/activities/activity-item).
+
++ title (string)
++ date (in ISO 8601 format)
++ location
+    + title (string)
+    + lat
+    + lng
++ category
++ cancelled
+
++ Parameters
+    + variant (optional, string, `full`)
+
+### List all activities [GET]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/activities",
+                    "activity_detail": "/activities/{activity_id}",
+                    "following_activities": "/users/followings",
+                },
+                "data":
+                    [
+                        {
+                            "type": "activity",
+                            "id": 42,
+                            "attributes": {
+                                "title": "Turbo bootcamp",
+                                "date": "2015-04-19T19:00:00+01:00",
+                                "location": {
+                                    "title": "Amsterdamse bos, Amsterdam",
+                                    "lat": 52.294156,
+                                    "lng": 4.823620
+                                },
+                                "category": "Crossrunning",
+                                "cancelled": false
+                            },
+                            "links": {
+                                "self": "/activities/42",
+                                "registration": "/activities/42/registration"
+                            }
+                        }
+                    ],
+                "meta": {
+                    "endpoints": {
+                        "registered_activities": "/users/registrations"
+                    }
+                }
+            }
+
+## Following activities collection [/users/followings{?variant}]
+
+Activities from clubs you are a member of.
+
+If `variant` is set to `full`, data contains all elements from the [detail call](/reference/activities/activity-item).
+
+This only shows activities up to two weeks in the future.
+
++ title (string)
++ date (in ISO 8601 format)
++ location
+    + title (string)
+    + lat
+    + lng
++ category
++ cancelled
+
++ Parameters
+    + variant (optional, string, `full`)
+
+### List all activities [GET]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/activities",
+                    "activity_detail": "/activities/{activity_id}",
+                    "registered_activities": "/users/registrations",
+                },
+                "data":
+                    [
+                        {
+                            "type": "activity",
+                            "id": 42,
+                            "attributes": {
+                                "title": "Turbo bootcamp",
+                                "date": "2015-04-19T19:00:00+01:00",
+                                "location": {
+                                    "title": "Amsterdamse bos, Amsterdam",
+                                    "lat": 52.294156,
+                                    "lng": 4.823620
+                                },
+                                "category": "Crossrunning",
+                                "cancelled": false
+                            },
+                            "links": {
+                                "self": "/activities/42",
+                                "registration": "/activities/42/registration"
+                            }
+                        }
+                    ],
+                "meta": {
+                    "endpoints": {
+                        "following_activities": "/users/followings"
+                    }
+                }
+            }
+
+## Giving activities collection [/users/activities{?variant}]
+
+Activities you - as the trainer - give to others.
+
+If `variant` is set to `full`, data contains all elements from the [detail call](/reference/activities/activity-item).
+
+This might include activities given by your club instead of only activities given by you personally.
+
+This only shows activities up to two weeks in the future.
+
++ title (string)
++ date (in ISO 8601 format)
++ location
+    + title (string)
+    + lat
+    + lng
++ category
++ cancelled
+
+If `variant` is set to `full`, it also contains:
+
++ participants
+
+### List all activities [GET]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/activities",
+                    "activity_detail": "/activities/{activity_id}",
+                },
+                "data":
+                    [
+                        {
+                            "type": "activity",
+                            "id": 42,
+                            "attributes": {
+                                "title": "Turbo bootcamp",
+                                "date": "2015-04-19T19:00:00+01:00",
+                                "location": {
+                                    "title": "Amsterdamse bos, Amsterdam",
+                                    "lat": 52.294156,
+                                    "lng": 4.823620
+                                },
+                                "category": "Crossrunning",
+                                "cancelled": false
+                            },
+                            "links": {
+                                "self": "/activities/42",
+                                "participants": "/activities/42/participants"
+                            }
+                        }
+                    ]
+            }
+
+### List all activities with full details [GET]
+
++ variant: `full`
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/activities",
+                    "activity_detail": "/activities/{activity_id}",
+                },
+                "data":
+                    [
+                        {
+                            "type": "activity",
+                            "id": 42,
+                            "attributes": {
+                                "title": "Turbo bootcamp",
+                                "date": "2015-04-19T19:00:00+01:00",
+                                "location": {
+                                    "title": "Amsterdamse bos, Amsterdam",
+                                    "lat": 52.294156,
+                                    "lng": 4.823620
+                                },
+                                "category": "Crossrunning",
+                                "cancelled": false,
+                                "description": "We verzamelen bij de ingang van het Clingendaelse bos. Dit is waar de Wassenaarsweg kruist met de laan van Clingendael.",
+                                "tags": [
+                                    "Buiten",
+                                    "Intensief",
+                                    "Laagdrempelig"
+                                ],
+                                "subscription": true
+                            },
+                            "relationships": {
+                                "club": {
+                                    "data": { "type": "club", "id": 42 }
+                                },
+                                "participants": {
+                                    "links": { "related": "/activities/42/participants" },
+                                    "data": { "type": "user", "id": [ 42, 24 ] }
+                                }
+                            },
+                            "links": {
+                                "self": "/activities/42",
+                                "registration": "/activities/42/registration"
+                            }
+                        }
+                    ]
+            }
+
+## Activity item [/activities/{activity_id}]
+
+An activity object has the following attributes:
+
++ title (string)
++ date (in ISO 8601 format)
++ location
+    + title (string)
+    + lat
+    + lng
++ category
++ cancelled
++ description (string)
++ tags ... array of tags
+    + title (string)
++ subscription
++ trainer
+    + type
+    + id
++ club
+    + type
+    + id
++ participants (only for trainers)
+    + type
+    + ids
+
+If subscription is false, a link is provided to the website to arrange payment.
+
++ Parameters
+    + activity_id (required, number, `42`) ... ID of the Activity
+
+### View an activity detail [GET]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/activities/42",
+                    "registration": "/activities/42/registration",
+                    "participants": "/activities/42/participants",
+                },
+                "data": {
+                    "type": "activity",
+                    "id": 42,
+                    "attributes": {
+                        "title": "Turbo bootcamp",
+                        "date": "2015-04-19T19:00:00+01:00",
+                        "location": {
+                            "title": "Amsterdamse bos, Amsterdam",
+                            "lat": 52.294156,
+                            "lng": 4.823620
+                        },
+                        "category": "Crossrunning",
+                        "cancelled": false,
+                        "description": "Trailrunning is harlopen in de natuur. ...",
+                        "tags": [
+                            "Crossrunning",
+                            "Hardlopen",
+                            "Bootcamp",
+                            "Bootcamp & fitness"
+                        ],
+                        "subscription": true
+                    },
+                    "relationships": {
+                        "trainer": {
+                            "data": { "type": "user", "id": 42 }
+                        },
+                        "club": {
+                            "data": { "type": "club", "id": 42 }
+                        },
+                        "participants": {
+                            "links": { "related": "/activities/43154/participants" },
+                            "data": { "type": "user", "id": [ 42, 24 ] }
+                        }
+                    },
+                    "links": {
+                        "self": "/activities/43154",
+                        "registration": "/activities/43154/registration"
+                    }
+                },
+                "included": [
+                    {
+                        "type": "user",
+                        "id": 42,
+                        "attributes": {
+                            "name": "Pavlov van Beerkoop",
+                            "avatar": "pavlov.jpg",
+                        },
+                        "links": {
+                            "self": "/trainers/42"
+                        }
+                    },
+                    {
+                        "type": "club",
+                        "id": 42,
+                        "attributes": {
+                            "name": "OUT!-Sport",
+                            "logo": "https://dxltue5g50eu3.cloudfront.net/content/icons/1/logo%20OUT!%20met%20url.png"
+                        },
+                        "links": {
+                            "self": "/clubs/42"
+                        }
+                    }
+                ],
+                "meta": {
+                    "endpoints": {
+                        "participants": "/activities/43154/participants",
+                        "registration": "/activities/43154/registration"
+                    }
+                }
+            }
+
+## Activity registration [/activities/{activity_id}/registration]
+
+Registering to an activity shows you'll be joining the activity.
+The activity will be added to your registered activities collection.
+It tells the trainer you want to join the activity.
+
+If an activity gets cancelled, we'll send notifications to all registered users.
+These notifications come via email and as push notification via a user's device
+(if they [registered for push notifications](/reference/users/user-device).)
+
+Note that right now we also send this notification to all non-registered members of the club.
+
++ Parameters
+    + activity_id (required, number, `42`) ... ID of the Activity
+
+### Register to an activity [PUT]
+
+Using PUT registers for the activity, withdrawing credit from a subscription.
+Make the request without a request body.
+
+Gives an error when the user doesn't have enough credits.
+In such case, the client should point the user to the website to buy more credits.
+
++ Response 204 (application/json)
+
++ Response 403 (application/json)
+
+    + Body
+        
+            {
+                "links": {
+                    "self": "/activities/42/registration"
+                },
+                "errors":
+                    [
+                        {
+                            "status": "403 Forbidden",
+                            "title": "Koop of verleng eerst een abonnement voor deze club.",
+                            "links": {
+                                "about": "https://www.out2move.nl/account/user/subscriptions"
+                            }
+                        }
+                    ],
+                "meta": {
+                    "documentation": "http://docs.out2move.apiary.io/"
+                }
+            }
+
+### Unregister from an activity [DELETE]
+
+Using DELETE unregisters for the activity, allowing refunding of credit for some subscriptions.
+Make the request without a request body.
+
++ Response 204 (application/json)
+
+# Group Trainers
+
+Resources for getting information about a trainer.
+
+## Trainer endpoints [/trainers]
+
+## Get possible endpoints [GET]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/trainers"
+                },
+                "data": [],
+                "meta": {
+                    "endpoints": {
+                        "trainer_detail": "/trainers/{trainer_id}"
+                    }
+                }
+            }
+
+## Trainer item [/trainers/{user_id}]
+
+Information about the trainer of an activity.
+
++ name
++ avatar
++ phone
++ email
++ introduction
++ club
+    + name
+    + logo
++ activities
+    + id
+
++ Parameters
+    + user_id (required, number, `42`) ... ID of the Trainer
+
+### View a trainer detail [GET]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/trainers/42"
+                },
+                "data": {
+                    "type": "user",
+                    "id": 42,
+                    "attributes": {
+                        "name": "Vincent Van den Tol",
+                        "avatar": "https://dxltue5g50eu3.cloudfront.net/content/profile/1/558077f02c968_photo.JPG",
+                        "phone": "",
+                        "email": "vincent@alsvanzelf.nl",
+                        "introduction": ""
+                    },
+                    "relationships": {
+                        "club": {
+                            "links": { "related": "/club/42" },
+                            "data": { "type": "club", "id": 42 }
+                        },
+                        "activities": {
+                            "data": { "type": "activity", "id": [ 42, 24 ] }
+                        }
+                    },
+                    "links": {
+                        "self": "/trainers/42"
+                    }
+                },
+                "included": [
+                    {
+                        "type": "club",
+                        "id": 42,
+                        "attributes": {
+                            "name": "OUT!-Sport",
+                            "logo": "https://dxltue5g50eu3.cloudfront.net/content/icons/1/logo%20OUT!%20met%20url.png"
+                        },
+                        "links": {
+                            "self": "/clubs/42"
+                        }
+                    }
+                ]
+            }
+
+# Group Clubs
+
+Resources for getting information about a club.
+
+## Club endpoints [/clubs]
+
+## Get possible endpoints [GET]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/clubs"
+                },
+                "data": [],
+                "meta": {
+                    "endpoints": {
+                        "club_detail": "/clubs/{club_id}"
+                    }
+                }
+            }
+
+## Clubs item [/clubs/{club_id}]
+
+Information about the club of an activity.
+
++ name
++ logo
++ activities
+    + id
+
++ Parameters
+    + club_id (required, number, `42`) ... ID of the Club
+
+### View a club detail [GET]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/clubs/42/"
+                },
+                "data": {
+                    "type": "club",
+                    "id": 42,
+                    "attributes": {
+                        "name": "OUT!-Sport",
+                        "logo": "https://dxltue5g50eu3.cloudfront.net/content/icons/1/logo%20OUT!%20met%20url.png"
+                    },
+                    "relationships": {
+                        "activities": {
+                            "data": { "type": "activity", "id": [ 42, 24 ] }
+                        }
+                    },
+                    "links": {
+                        "self": "/clubs/42/",
+                        "members": "/clubs/42/members"
+                    }
+                }
+            }
+
+## Club members collection [/clubs/{club_id}/members]
+
+This is only available for trainers.
+
++ name
++ avatar
++ phone
++ club
+    + credit_left
+    + subscription_name
+    + subscription_date_start
+    + subscription_date_end
+    + subscription_payment_due
+    + last_activity
+
++ Parameters
+    + club_id (required, number, `42`) ... ID of the Club
+
+### Lists all members [GET]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/clubs/42/members"
+                },
+                "data":
+                    [
+                        {
+                            "type": "user",
+                            "id": 42,
+                            "attributes": {
+                                "name": "Lode Claassen",
+                                "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                                "phone": "",
+                                "club": {
+                                    "credit_left": 12,
+                                    "subscription_name": "Maandabonnement - onbeperkt",
+                                    "subscription_date_start": "2015-02-11T00:00:00+0100",
+                                    "subscription_date_end": "2016-02-01T00:00:00+0100",
+                                    "subscription_payment_due": false,
+                                    "last_activity": "2015-08-04T19:30:00+0100"
+                                }
+                            },
+                            "links": {
+                                "self": "/clubs/42/members/42"
+                            }
+                        }
+                    ]
+            }
+
+### Add a new member [POST]
+
+Adds a person as member of the club.
+
+Mostly, unregistered users are members of the club and are listed on above endpoint.
+POSTing to this endpoint allows the trainer to add a new user as a member.
+
+The trainer can then register them to the activity and mark their presence.
+
++ emailaddress (string) - Email address of the person
+
++ Request (application/json)
+
+            {
+                "emailaddress": "john@doe.com",
+            }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /clubs/42/members/42
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/activities/42/members/42"
+                },
+                "data": {
+                    "type": "user",
+                    "id": 42,
+                    "attributes": {
+                        "name": "Lode Claassen",
+                        "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                        "phone": "",
+                        "club": {
+                            "credit_left": 12,
+                            "subscription_name": "Maandabonnement - onbeperkt",
+                            "subscription_date_start": "2015-02-11T00:00:00+0100",
+                            "subscription_date_end": "2016-02-01T00:00:00+0100",
+                            "subscription_payment_due": false,
+                            "last_activity": "2015-08-04T19:30:00+0100"
+                        }
+                    },
+                    "links": {
+                        "self": "/clubs/42/members/42"
+                    }
+                }
+            }
+
+## Club member [/clubs/{club_id}/members/{user_id}]
+
++ name
++ avatar
++ phone
++ club
+    + credit_left
+    + subscription_name
+    + subscription_date_start
+    + subscription_date_end
+    + subscription_payment_due
+    + last_activity
+
++ Parameters
+    + club_id (required, number, `42`) ... ID of the Club
+    + user_id (required, number, `42`) ... ID of the Member
+
+### View a member detail [GET]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/activities/42/members/42"
+                },
+                "data": {
+                    "type": "user",
+                    "id": 42,
+                    "attributes": {
+                        "name": "Lode Claassen",
+                        "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                        "phone": "",
+                        "club": {
+                            "credit_left": 12,
+                            "subscription_name": "Maandabonnement - onbeperkt",
+                            "subscription_date_start": "2015-02-11T00:00:00+0100",
+                            "subscription_date_end": "2016-02-01T00:00:00+0100",
+                            "subscription_payment_due": true,
+                            "last_activity": "2015-08-04T19:30:00+0100"
+                        }
+                    },
+                    "links": {
+                        "self": "/clubs/42/members/42"
+                    }
+                }
+            }
+
+# Group Participants
+
+Resources with information about participants of activities.
+
+This is only available for trainers.
+Participants can update their own registration for a specific activity via the [activity registration endpoint](/reference/activities/activity-registration).
+
+## Activity participants collection [/activities/{activity_id}/participants]
+
+Lists people who join(ed) an activity.
+
++ name
++ avatar
++ phone
++ activity
+    + status (enum joins|cancelled)
+    + presence (enum unknown|present|absent)
++ club
+    + credit_left
+    + subscription_name
+    + subscription_date_start
+    + subscription_date_end
+    + subscription_payment_due
+    + last_activity
+
++ Parameters
+    + activity_id (required, number, `42`) ... ID of the Activity
+
+### Get the participants of an activity [GET]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/activities/42/participants"
+                },
+                "data":
+                    [
+                        {
+                            "type": "user",
+                            "id": 42,
+                            "attributes": {
+                                "name": "Lode Claassen",
+                                "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                                "phone": "",
+                                "activity": {
+                                    "status": "joins",
+                                    "presence": "present"
+                                },
+                                "club": {
+                                    "credit_left": 12,
+                                    "subscription_name": "Maandabonnement - onbeperkt",
+                                    "subscription_date_start": "2015-02-11T00:00:00+0100",
+                                    "subscription_date_end": "2016-02-01T00:00:00+0100",
+                                    "subscription_payment_due": false,
+                                    "last_activity": "2015-08-04T19:30:00+0100"
+                                }
+                            },
+                            "links": {
+                                "self": "/activities/42/participants/42"
+                            }
+                        }
+                    ]
+            }
+
+## Activity participant [/activities/{activity_id}/participants/{user_id}]
+
++ name
++ avatar
++ phone
++ activity
+    + status (enum joins|cancelled)
+    + presence (enum unknown|present|absent)
++ club
+    + credit_left
+    + subscription_name
+    + subscription_date_start
+    + subscription_date_end
+    + subscription_payment_due
+    + last_activity
+
++ Parameters
+    + activity_id (required, number, `42`) ... ID of the Activity
+    + user_id (required, number, `42`) ... ID of the Participant
+
+### Add a user as participant [POST]
+
+Add a user as a participant of the activity.
+
+Normally, the user registers by them self.
+This endpoint allows the trainer to register a unregistered participant.
+The participant receive a notification as it impacts payments.
+
+A trainer can only add users which are members of the club.
+To get a user id for the request, fetch a list of members via the [club members endpoint](/reference/clubs/club-members-collection).
+
++ Response 204 (application/json)
+
+    + Headers
+
+            Location: /activities/42/participants/42
+
+### View a participant detail [GET]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/activities/42/participants/42"
+                },
+                "data": {
+                    "type": "user",
+                    "id": 42,
+                    "attributes": {
+                        "name": "Lode Claassen",
+                        "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                        "phone": "",
+                        "activity": {
+                            "status": "joins",
+                            "presence": "present"
+                        },
+                        "club": {
+                            "credit_left": 12,
+                            "subscription_name": "Maandabonnement - onbeperkt",
+                            "subscription_date_start": "2015-02-11T00:00:00+0100",
+                            "subscription_date_end": "2016-02-01T00:00:00+0100",
+                            "subscription_payment_due": false,
+                            "last_activity": "2015-08-04T19:30:00+0100"
+                        }
+                    },
+                    "links": {
+                        "self": "/activities/42/participants/42"
+                    }
+                }
+            }
+
+## Participant presence [/activities/{activity_id}/participants/{user_id}/presence]
+
+Marking a participant as present finishes the payment loop.
+Marking as absent, allows for a refund in some subscriptions.
+
++ Parameters
+    + activity_id (required, number, `42`) ... ID of the Activity
+    + user_id (required, number, `42`) ... ID of the Participant
+
+### Mark a participant as present [PUT]
+
+Using PUT marks the participant as present.
+Make the request without a request body.
+
++ Response 204 (application/json)
+
+    + Headers
+
+            Location: /activities/42/participants/42
+
+### Mark a participant as absent [DELETE]
+
+Using DELETE marks the participant as absent.
+Make the request without a request body.
+
++ Response 204 (application/json)
+
+    + Headers
+
+            Location: /activities/42/participants/42
+
+# Group Conversations
+
+Conversations between trainers and their participants.
+
+Each conversations is connected to a club.
+Conversations are only visible if you are connected to the club.
+
+- A sportsman only sees conversations from clubs they follow.
+- A trainer only sees conversations from clubs they train at.
+  Note, a trainer *does not* see conversations from clubs they follow themselves.
+
+For now, conversations are initiated one-way, only trainers can start them.
+Participants can add messages inside a conversation.
+
+For now, (un)read status is *not* tracked for conversations or messages.
+Clients should build an own cache of the (un)read status.
+
+## Conversations collection [/conversations{?club_id}]
+
++ title
++ starting_date
++ author
+    + name
+    + avatar
+    + phone
++ starting_message
+    + text
+    + date
+
++ Parameters
+    + club_id (optional, number, `42`) ... To only select conversations from that club
+
+### Lists all conversations [GET]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/conversations"
+                },
+                "data":
+                    [
+                        {
+                            "type": "conversation",
+                            "id": 42,
+                            "attributes": {
+                                "title": "Welkom",
+                                "starting_date": "2015-06-23T14:15:38+0200"
+                            },
+                            "relationships": {
+                                "author": {
+                                    "data": { "type": "user", "id": 42 }
+                                },
+                                "starting_message": {
+                                    "data": { "type": "message", "id": 42 }
+                                }
+                            },
+                            "links": {
+                                "self": "/conversations/42"
+                            }
+                        }
+                    ],
+                "included":
+                    [
+                        {
+                            "type": "user",
+                            "id": 42,
+                            "attributes": {
+                                "name": "Lode Claassen",
+                                "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                                "phone": ""
+                            }
+                        },
+                        {
+                            "type": "message",
+                            "id": 42,
+                            "attributes": {
+                                "text": "Aan iedereen natuurlijk!",
+                                "date": "2015-06-23T14:15:38+0200"
+                            }
+                        }
+                    ]
+            }
+
+### Add a new conversation [POST]
+
+By starting a conversation with a `message` parameter, a push notification is sent out.
+See [adding a message](/reference/conversations/message-collection) for details.
+
++ club_id (required, number, `42`) ... The club the conversation belongs to
++ title (optional, string) - Title of the conversation
++ message (optional, string) - First message in the conversation
+
++ Request (application/json)
+
+            {
+                "club_id": 42,
+                "title": "Welkom",
+                "message": "Aan iedereen natuurlijk!",
+            }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /conversations/42
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/conversations/42"
+                },
+                "data": {
+                    "type": "conversation",
+                    "id": 42,
+                    "attributes": {
+                        "title": "Welkom",
+                        "starting_date": "2015-06-23T14:15:38+0200"
+                    },
+                    "relationships": {
+                        "author": {
+                            "data": { "type": "user", "id": 42 }
+                        },
+                        "starting_message": {
+                            "data": { "type": "message", "id": 42 }
+                        }
+                    },
+                    "links": {
+                        "self": "/conversations/42",
+                        "messages": "/conversations/42/messages"
+                    }
+                },
+                "included":
+                    [
+                        {
+                            "type": "user",
+                            "id": 42,
+                            "attributes": {
+                                "name": "Lode Claassen",
+                                "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                                "phone": "",
+                            }
+                        },
+                        {
+                            "type": "message",
+                            "id": 42,
+                            "attributes": {
+                                "text": "Aan iedereen natuurlijk!",
+                                "date": "2015-06-23T14:15:38+0200"
+                            }
+                        }
+                    ]
+            }
+
+## Conversation item [/conversations/{conversation_id}]
+
++ title
++ starting_date
++ author
+    + name
+    + avatar
+    + phone
++ starting_message
+    + text
+    + date
+
++ Parameters
+    + conversation_id (required, number, `42`) ... ID of the Conversation
+
+### View details of a conversation [GET]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/conversations/42"
+                },
+                "data": {
+                    "type": "conversation",
+                    "id": 42,
+                    "attributes": {
+                        "title": "Welkom",
+                        "starting_date": "2015-06-23T14:15:38+0200"
+                    },
+                    "relationships": {
+                        "author": {
+                            "data": { "type": "user", "id": 42 }
+                        },
+                        "starting_message": {
+                            "data": { "type": "message", "id": 42 }
+                        }
+                    },
+                    "links": {
+                        "self": "/conversations/42",
+                        "messages": "/conversations/42/messages"
+                    }
+                },
+                "included":
+                    [
+                        {
+                            "type": "user",
+                            "id": 42,
+                            "attributes": {
+                                "name": "Lode Claassen",
+                                "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                                "phone": "",
+                            }
+                        },
+                        {
+                            "type": "message",
+                            "id": 42,
+                            "attributes": {
+                                "text": "Aan iedereen natuurlijk!",
+                                "date": "2015-06-23T14:15:38+0200"
+                            }
+                        }
+                    ]
+            }
+
+## Message collection [/conversations/{conversation_id}/messages]
+
++ text
++ date
++ author
+    + name
+    + avatar
+
++ Parameters
+    + conversation_id (required, number, `42`) ... ID of the Conversation
+
+### Lists all messages [GET]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/conversations/42/messages"
+                },
+                "data":
+                    [
+                        {
+                            "type": "message",
+                            "id": 42,
+                            "attributes": {
+                                "text": "Aan iedereen natuurlijk!",
+                                "date": "2015-06-23T14:15:38+0200"
+                            },
+                            "relationships": {
+                                "author": {
+                                    "data": { "type": "user", "id": 42 }
+                                }
+                            }
+                        },
+                        {
+                            "type": "message",
+                            "id": 44,
+                            "attributes": {
+                                "text": "Thanks!",
+                                "date": "2015-06-23T14:16:50+0200"
+                            },
+                            "relationships": {
+                                "author": {
+                                    "data": { "type": "user", "id": 24 }
+                                }
+                            }
+                        }
+                    ],
+                "included":
+                    [
+                        {
+                            "type": "user",
+                            "id": 42,
+                            "attributes": {
+                                "name": "Lode Claassen",
+                                "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                                "phone": "",
+                            }
+                        },
+                        {
+                            "type": "user",
+                            "id": 24,
+                            "attributes": {
+                                "name": "Vincent Van den Tol",
+                                "avatar": "https://dxltue5g50eu3.cloudfront.net/content/profile/1/558077f02c968_photo.JPG",
+                                "phone": ""
+                            }
+                        }
+                    ]
+            }
+
+### Add a new message [POST]
+
+By adding a message, a push notification is sent out to all other members and trainers of the club.
+The metadata of the push notification will contain a `type` of `new-message`.
+Further it contains a `message_id` and `conversation_id` to redirect users to a relevant place.
+
++ conversation_id (required, number, `42`) ... The conversation to add the message to
++ message (string) - Contents of the new message
+
++ Request (application/json)
+
+            {
+                "conversation_id": 42,
+                "message": "Thanks :)",
+            }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /conversations/42/messages
+
+    + Body
+
+            {
+                "links": {
+                    "self": "/conversations/42/messages"
+                },
+                "data":
+                    [
+                        {
+                            "type": "message",
+                            "id": 42,
+                            "attributes": {
+                                "text": "Aan iedereen natuurlijk!",
+                                "date": "2015-06-23T14:15:38+0200"
+                            },
+                            "relationships": {
+                                "author": {
+                                    "data": { "type": "user", "id": 42 }
+                                }
+                            }
+                        },
+                        {
+                            "type": "message",
+                            "id": 44,
+                            "attributes": {
+                                "text": "Thanks!",
+                                "date": "2015-06-23T14:16:50+0200"
+                            },
+                            "relationships": {
+                                "author": {
+                                    "data": { "type": "user", "id": 24 }
+                                }
+                            }
+                        }
+                    ],
+                "included":
+                    [
+                        {
+                            "type": "user",
+                            "id": 42,
+                            "attributes": {
+                                "name": "Lode Claassen",
+                                "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                                "phone": "",
+                            }
+                        },
+                        {
+                            "type": "user",
+                            "id": 24,
+                            "attributes": {
+                                "name": "Vincent Van den Tol",
+                                "avatar": "https://dxltue5g50eu3.cloudfront.net/content/profile/1/558077f02c968_photo.JPG",
+                                "phone": ""
+                            }
+                        }
+                    ]
+            }
