@@ -89,6 +89,9 @@ Clients should build an own cache of the (un)read status.
 
 ### Add a new conversation [POST]
 
+By starting a conversation with a `message` parameter, a push notification is sent out.
+See [adding a message](/reference/conversations/message-collection) for details.
+
 + club_id (required, number, `42`) ... The club the conversation belongs to
 + title (optional, string) - Title of the conversation
 + message (optional, string) - First message in the conversation
@@ -222,7 +225,7 @@ Clients should build an own cache of the (un)read status.
                     ]
             }
 
-## Messages collection [/conversations/{conversation_id}/messages]
+## Message collection [/conversations/{conversation_id}/messages]
 
 + text
 + date
@@ -296,6 +299,10 @@ Clients should build an own cache of the (un)read status.
             }
 
 ### Add a new message [POST]
+
+By adding a message, a push notification is sent out to all other members and trainers of the club.
+The metadata of the push notification will contain a `type` of `new-message`.
+Further it contains a `message_id` and `conversation_id` to redirect users to a relevant place.
 
 + conversation_id (required, number, `42`) ... The conversation to add the message to
 + message (string) - Contents of the new message
