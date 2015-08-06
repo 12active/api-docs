@@ -155,7 +155,7 @@ This allows for push notifications to be sent to the user's device.
 
 Right now only Android and iOS devices are recognized.
 
-### (Re-)Activate a device [PUT]
+### Activate/re-activate a device [PUT]
 
 Using PUT activates the device, or marks it as still active when already activated.
 Use this when logging in after asking the users permission.
