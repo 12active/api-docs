@@ -25,6 +25,7 @@ Clients should build an own cache of the (un)read status.
 + author
     + name
     + avatar
+    + phone
 + starting_message
     + text
     + date
@@ -40,7 +41,7 @@ Clients should build an own cache of the (un)read status.
 
             {
                 "links": {
-                    "self": "/api/conversations"
+                    "self": "/conversations"
                 },
                 "data":
                     [
@@ -49,24 +50,18 @@ Clients should build an own cache of the (un)read status.
                             "id": 42,
                             "attributes": {
                                 "title": "Welkom",
-                                "starting_date": "2015-06-23 14:15:38"
+                                "starting_date": "2015-06-23T14:15:38+0200"
                             },
                             "relationships": {
                                 "author": {
-                                    "data": {
-                                        "type": "user",
-                                        "id": 42
-                                    }
+                                    "data": { "type": "user", "id": 42 }
                                 },
                                 "starting_message": {
-                                    "data": {
-                                        "type": "message",
-                                        "id": 42
-                                    }
+                                    "data": { "type": "message", "id": 42 }
                                 }
                             },
                             "links": {
-                                "self": "/api/conversations/42"
+                                "self": "/conversations/42"
                             }
                         }
                     ],
@@ -76,16 +71,17 @@ Clients should build an own cache of the (un)read status.
                             "type": "user",
                             "id": 42,
                             "attributes": {
-                                "name": "Pavlov van Beerkoop",
-                                "avatar": "pavlov.jpg",
+                                "name": "Lode Claassen",
+                                "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                                "phone": ""
                             }
                         },
                         {
                             "type": "message",
                             "id": 42,
                             "attributes": {
-                                "text": "Thanks!",
-                                "date": "2015-06-23T14:16:50+0200"
+                                "text": "Aan iedereen natuurlijk!",
+                                "date": "2015-06-23T14:15:38+0200"
                             }
                         }
                     ]
@@ -109,56 +105,51 @@ Clients should build an own cache of the (un)read status.
 
     + Headers
 
-            Location: /api/conversations/42
+            Location: /conversations/42
 
     + Body
 
             {
                 "links": {
-                    "self": "/api/conversations/42"
+                    "self": "/conversations/42"
                 },
                 "data": {
                     "type": "conversation",
                     "id": 42,
                     "attributes": {
                         "title": "Welkom",
-                        "starting_date": "2015-06-23 14:15:38"
+                        "starting_date": "2015-06-23T14:15:38+0200"
                     },
                     "relationships": {
                         "author": {
-                            "data": {
-                                "type": "user",
-                                "id": 42
-                            }
+                            "data": { "type": "user", "id": 42 }
                         },
                         "starting_message": {
-                            "data": {
-                                "type": "message",
-                                "id": 42
-                            }
+                            "data": { "type": "message", "id": 42 }
                         }
                     },
                     "links": {
-                        "self": "/api/conversations/42",
-                        "messages": "/api/conversations/42/messages"
+                        "self": "/conversations/42",
+                        "messages": "/conversations/42/messages"
                     }
-                }
+                },
                 "included":
                     [
                         {
                             "type": "user",
                             "id": 42,
                             "attributes": {
-                                "name": "Pavlov van Beerkoop",
-                                "avatar": "pavlov.jpg",
+                                "name": "Lode Claassen",
+                                "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                                "phone": "",
                             }
                         },
                         {
                             "type": "message",
                             "id": 42,
                             "attributes": {
-                                "text": "Thanks!",
-                                "date": "2015-06-23T14:16:50+0200"
+                                "text": "Aan iedereen natuurlijk!",
+                                "date": "2015-06-23T14:15:38+0200"
                             }
                         }
                     ]
@@ -171,6 +162,7 @@ Clients should build an own cache of the (un)read status.
 + author
     + name
     + avatar
+    + phone
 + starting_message
     + text
     + date
@@ -186,50 +178,45 @@ Clients should build an own cache of the (un)read status.
 
             {
                 "links": {
-                    "self": "/api/conversations/42"
+                    "self": "/conversations/42"
                 },
                 "data": {
                     "type": "conversation",
                     "id": 42,
                     "attributes": {
                         "title": "Welkom",
-                        "starting_date": "2015-06-23 14:15:38"
+                        "starting_date": "2015-06-23T14:15:38+0200"
                     },
                     "relationships": {
                         "author": {
-                            "data": {
-                                "type": "user",
-                                "id": 42
-                            }
+                            "data": { "type": "user", "id": 42 }
                         },
                         "starting_message": {
-                            "data": {
-                                "type": "message",
-                                "id": 42
-                            }
+                            "data": { "type": "message", "id": 42 }
                         }
                     },
                     "links": {
-                        "self": "/api/conversations/42",
-                        "messages": "/api/conversations/42/messages"
+                        "self": "/conversations/42",
+                        "messages": "/conversations/42/messages"
                     }
-                }
+                },
                 "included":
                     [
                         {
                             "type": "user",
                             "id": 42,
                             "attributes": {
-                                "name": "Pavlov van Beerkoop",
-                                "avatar": "pavlov.jpg",
+                                "name": "Lode Claassen",
+                                "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                                "phone": "",
                             }
                         },
                         {
                             "type": "message",
                             "id": 42,
                             "attributes": {
-                                "text": "Thanks!",
-                                "date": "2015-06-23T14:16:50+0200"
+                                "text": "Aan iedereen natuurlijk!",
+                                "date": "2015-06-23T14:15:38+0200"
                             }
                         }
                     ]
@@ -254,7 +241,7 @@ Clients should build an own cache of the (un)read status.
 
             {
                 "links": {
-                    "self": "/api/conversations/42/messages"
+                    "self": "/conversations/42/messages"
                 },
                 "data":
                     [
@@ -263,14 +250,24 @@ Clients should build an own cache of the (un)read status.
                             "id": 42,
                             "attributes": {
                                 "text": "Aan iedereen natuurlijk!",
-                                "date": "2015-06-23 14:15:38"
+                                "date": "2015-06-23T14:15:38+0200"
                             },
                             "relationships": {
                                 "author": {
-                                    "data": {
-                                        "type": "user",
-                                        "id": 1
-                                    }
+                                    "data": { "type": "user", "id": 42 }
+                                }
+                            }
+                        },
+                        {
+                            "type": "message",
+                            "id": 44,
+                            "attributes": {
+                                "text": "Thanks!",
+                                "date": "2015-06-23T14:16:50+0200"
+                            },
+                            "relationships": {
+                                "author": {
+                                    "data": { "type": "user", "id": 24 }
                                 }
                             }
                         }
@@ -281,8 +278,18 @@ Clients should build an own cache of the (un)read status.
                             "type": "user",
                             "id": 42,
                             "attributes": {
-                                "name": "Pavlov van Beerkoop",
-                                "avatar": "pavlov.jpg",
+                                "name": "Lode Claassen",
+                                "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                                "phone": "",
+                            }
+                        },
+                        {
+                            "type": "user",
+                            "id": 24,
+                            "attributes": {
+                                "name": "Vincent Van den Tol",
+                                "avatar": "https://dxltue5g50eu3.cloudfront.net/content/profile/1/558077f02c968_photo.JPG",
+                                "phone": ""
                             }
                         }
                     ]
@@ -304,13 +311,13 @@ Clients should build an own cache of the (un)read status.
 
     + Headers
 
-            Location: /api/conversations/42
+            Location: /conversations/42/messages
 
     + Body
 
             {
                 "links": {
-                    "self": "/api/conversations/42/messages"
+                    "self": "/conversations/42/messages"
                 },
                 "data":
                     [
@@ -319,30 +326,24 @@ Clients should build an own cache of the (un)read status.
                             "id": 42,
                             "attributes": {
                                 "text": "Aan iedereen natuurlijk!",
-                                "date": "2015-06-23 14:15:38"
+                                "date": "2015-06-23T14:15:38+0200"
                             },
                             "relationships": {
                                 "author": {
-                                    "data": {
-                                        "type": "user",
-                                        "id": 1
-                                    }
+                                    "data": { "type": "user", "id": 42 }
                                 }
                             }
                         },
                         {
                             "type": "message",
-                            "id": 24,
+                            "id": 44,
                             "attributes": {
-                                "text": "Thanks",
-                                "date": "2015-06-23 14:16:50"
+                                "text": "Thanks!",
+                                "date": "2015-06-23T14:16:50+0200"
                             },
                             "relationships": {
                                 "author": {
-                                    "data": {
-                                        "type": "user",
-                                        "id": 1
-                                    }
+                                    "data": { "type": "user", "id": 24 }
                                 }
                             }
                         }
@@ -353,8 +354,18 @@ Clients should build an own cache of the (un)read status.
                             "type": "user",
                             "id": 42,
                             "attributes": {
-                                "name": "Pavlov van Beerkoop",
-                                "avatar": "pavlov.jpg",
+                                "name": "Lode Claassen",
+                                "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                                "phone": "",
+                            }
+                        },
+                        {
+                            "type": "user",
+                            "id": 24,
+                            "attributes": {
+                                "name": "Vincent Van den Tol",
+                                "avatar": "https://dxltue5g50eu3.cloudfront.net/content/profile/1/558077f02c968_photo.JPG",
+                                "phone": ""
                             }
                         }
                     ]
