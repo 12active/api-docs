@@ -14,9 +14,17 @@ Lists people who join(ed) an activity.
 
 + name
 + avatar
-+ status (enum joins|cancelled)
-+ presence (enum unknown|present|absent)
-+ subscription_payment_due
++ phone
++ activity
+    + status (enum joins|cancelled)
+    + presence (enum unknown|present|absent)
++ club
+    + credit_left
+    + subscription_name
+    + subscription_date_start
+    + subscription_date_end
+    + subscription_payment_due
+    + last_activity
 
 + Parameters
     + activity_id (required, number, `42`) ... ID of the Activity
@@ -30,7 +38,6 @@ Lists people who join(ed) an activity.
             {
                 "links": {
                     "self": "/activities/42/participants"
-                    "activity_details": "/activities/42"
                 },
                 "data":
                     [
@@ -38,14 +45,24 @@ Lists people who join(ed) an activity.
                             "type": "user",
                             "id": 42,
                             "attributes": {
-                                "name": "Niels Groen",
-                                "avatar": "sportyguru78.jpg",
-                                "status": "joins",
-                                "presence": "unknown",
-                                "subscription_payment_due": false,
+                                "name": "Lode Claassen",
+                                "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                                "phone": "",
+                                "activity": {
+                                    "status": "joins",
+                                    "presence": "present"
+                                },
+                                "club": {
+                                    "credit_left": 12,
+                                    "subscription_name": "Maandabonnement - onbeperkt",
+                                    "subscription_date_start": "2015-02-11T00:00:00+0100",
+                                    "subscription_date_end": "2016-02-01T00:00:00+0100",
+                                    "subscription_payment_due": false,
+                                    "last_activity": "2015-08-04T19:30:00+0100"
+                                }
                             },
                             "links": {
-                                "self": "/activities/42/participant/42"
+                                "self": "/activities/42/participants/42"
                             }
                         }
                     ]
@@ -56,14 +73,16 @@ Lists people who join(ed) an activity.
 + name
 + avatar
 + phone
-+ status (enum joins|cancelled)
-+ presence (enum unknown|present|absent)
-+ subscription_payment_due
-+ subscription_credits_left
-+ subscription_start
-+ subscription_end
-+ subscription_method
-+ subscription_club
++ activity
+    + status (enum joins|cancelled)
+    + presence (enum unknown|present|absent)
++ club
+    + credit_left
+    + subscription_name
+    + subscription_date_start
+    + subscription_date_end
+    + subscription_payment_due
+    + last_activity
 
 + Parameters
     + activity_id (required, number, `42`) ... ID of the Activity
@@ -95,49 +114,29 @@ To get a user id for the request, fetch a list of members via the [club members 
             {
                 "links": {
                     "self": "/activities/42/participants/42"
-                    "participants": "/activities/42/participants"
-                    "activity_details": "/activities/42"
                 },
                 "data": {
                     "type": "user",
                     "id": 42,
                     "attributes": {
-                        "name": "Niels Groen",
-                        "avatar": "sportyguru78.jpg",
-                        "phone": "06 - 12 34 56 78",
-                        "status": "joins",
-                        "presence": "unknown",
-                        "subscription_payment_due": false,
-                        "subscription_credits_left": 9,
-                        "subscription_start": "2015-05-12",
-                        "subscription_end": "2015-06-12",
-                        "subscription_method": "Abonnement",
+                        "name": "Lode Claassen",
+                        "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                        "phone": "",
+                        "activity": {
+                            "status": "joins",
+                            "presence": "present"
+                        },
+                        "club": {
+                            "credit_left": 12,
+                            "subscription_name": "Maandabonnement - onbeperkt",
+                            "subscription_date_start": "2015-02-11T00:00:00+0100",
+                            "subscription_date_end": "2016-02-01T00:00:00+0100",
+                            "subscription_payment_due": false,
+                            "last_activity": "2015-08-04T19:30:00+0100"
+                        }
                     },
                     "links": {
-                        "self": "/activities/42/participant/42",
-                        "presence": "/activities/42/participant/42/presence",
-                        "subscription_club": {
-                            "related": "/clubs/42",
-                            "linkage": { "type": "club", "id": 42 }
-                        },
-                    }
-                },
-                "included": [
-                    {
-                        "type": "club",
-                        "id": 42,
-                        "attributes": {
-                            "name": "Calandfit",
-                            "logo": "calandfit.png"
-                        },
-                        "links": {
-                            "self": "/clubs/42"
-                        }
-                    }
-                ],
-                "meta": {
-                    "messages": {
-                        "subscription_payment_due": "Betalingsachterstand"
+                        "self": "/activities/42/participants/42"
                     }
                 }
             }
