@@ -15,10 +15,14 @@ Resources for getting information about a club.
 
             {
                 "links": {
-                    "self": "/clubs",
-                    "club_detail": "/clubs/{club_id}",
+                    "self": "/clubs"
                 },
-                "data": {}
+                "data": [],
+                "meta": {
+                    "endpoints": {
+                        "club_detail": "/clubs/{club_id}"
+                    }
+                }
             }
 
 ## Clubs item [/clubs/{club_id}]

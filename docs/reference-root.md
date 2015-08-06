@@ -14,12 +14,16 @@ The response contains all starting endpoints to explore.
 
             {
                 "links": {
-                    "self": "/",
-                    "users": "/users",
-                    "activities": "/activities",
-                    "trainers": "/trainers",
-                    "clubs": "/clubs",
-                    "conversations": "/conversations"
+                    "self": "/"
                 },
-                "data": {}
+                "data": [],
+                "meta": {
+                    "endpoints": {
+                        "users_url": "/users",
+                        "activities_url": "/activities",
+                        "trainers_url": "/trainers",
+                        "clubs_url": "/clubs",
+                        "conversations_url": "/conversations"
+                    }
+                }
             }

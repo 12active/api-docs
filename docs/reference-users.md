@@ -15,13 +15,17 @@ Resources for session management and getting information about the currently log
 
             {
                 "links": {
-                    "self": "/users",
-                    "user_detail": "/users/me",
-                    "registered_activities": "/users/registrations",
-                    "following_activities": "/users/followings",
-                    "giving_activities": "/users/activities"
+                    "self": "/users"
                 },
-                "data": {}
+                "data": [],
+                "meta": {
+                    "endpoints": {
+                        "user_detail": "/users/me",
+                        "registered_activities": "/users/registrations",
+                        "following_activities": "/users/followings",
+                        "giving_activities": "/users/activities"
+                    }
+                }
             }
 
 ## User item [/users/me]

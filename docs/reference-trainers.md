@@ -15,10 +15,14 @@ Resources for getting information about a trainer.
 
             {
                 "links": {
-                    "self": "/trainers",
-                    "trainer_detail": "/trainers/{user_id}",
+                    "self": "/trainers"
                 },
-                "data": {}
+                "data": [],
+                "meta": {
+                    "endpoints": {
+                        "trainer_detail": "/trainers/{trainer_id}"
+                    }
+                }
             }
 
 ## Trainer item [/trainers/{user_id}]

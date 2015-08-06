@@ -26,13 +26,17 @@ In the future, there will be endpoints for activities based on location or type.
 
             {
                 "links": {
-                    "self": "/activities",
-                    "activity_detail": "/activities/{activity_id}",
-                    "registered_activities": "/users/registrations",
-                    "following_activities": "/users/followings",
-                    "giving_activities": "/users/activities"
+                    "self": "/activities"
                 },
-                "data": {}
+                "data": [],
+                "meta": {
+                    "endpoints": {
+                        "activity_detail": "/activities/{activity_id}",
+                        "registered_activities": "/users/registrations",
+                        "following_activities": "/users/followings",
+                        "giving_activities": "/users/activities"
+                    }
+                }
             }
 
 ## Registered activities collection [/users/registrations{?variant}]
