@@ -53,21 +53,23 @@ Each response can contain the following attributes:
                  this may be a dynamic url for collections and the like
                  i.e. for an `/featured-activity-of-the-day` endpoint
                  as apposed to `data.links.self` which gives the exact same resource
-    + more links ... linking to related resources
-                     often going lower or higher in the endpoint structure
 
 + `data` ... object, or array of objects
     + `type` ... the type of resource, i.e. `activity`
     + `id`
     + `attributes`
         + primary data
-    + `links`
-        + `self` ... link to the resource just requested, i.e.: `/endpoint/{id}`
+    + `relationships`
         + some related resource
-            + `related` ... link to the related resource, i.e.: `/author/{id}`
-            + `linkage` ... way to find back resources in the `included` array
+            + `links`
+                + `related` ... link to the related resource, i.e.: `/author/{id}`
+            + `data` ... info to find back resources in the `included` array
                 + `type`
                 + `id` ... int or array of ints
+    + `links`
+        + `self` ... link to the resource just requested, i.e.: `/endpoint/{id}`
+        + more links ... linking to related resources
+                         often going lower or higher in the endpoint structure
 
 + `included` ... array of objects
     + `type`
