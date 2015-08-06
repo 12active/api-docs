@@ -17,9 +17,15 @@ By default, it requires the user's username and password.
 The credential is a base 64 encoded string containing `username:password`.
 I.e. `Authorization: Basic c3BvcnR5Z3VydTc4OmxldG1laW4=`.
 
-Users can also authenticate via Facebook by sending their oauth access token:
+Users should authenticate via Facebook if they signed up at Out2Move using Facebook.
+Clients are responsible for handling oauth with Facebook using Out2Move provided app info.
+After handling oauth, the user should be checked at Out2Move by sending their oauth access token.
 I.e. `Authorization: Out2MoveFacebookLogin: access_token=xyz`.
 
+Note right now users can only use one login method, either username/password *or* Facebook.
+This depends on how they signed up at Out2Move.
+
+As full authentication is needed for every call, there is no specific login endpoint.
 Testing for a successful login can be best done using the [/users/me call](/reference/users/user-item).
 
 ### Following links
