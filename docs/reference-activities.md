@@ -404,10 +404,33 @@ Note that right now we also send this notification to all non-registered members
 Using PUT registers for the activity, withdrawing credit from a subscription.
 Make the request without a request body.
 
-Gives an error when the user doesn't have enough credits.
+Gives a 400 error when the activity can not be registered for anymore.
+As is the case for cancelled, past, external, or full activities.
+This can be prevented by not registering for activities w/o `registration` link.
+
+Gives a 403 error when the user doesn't have enough credits.
 In such case, the client should point the user to the website to buy more credits.
 
 + Response 204 (application/json)
+
++ Response 400 (application/json)
+
+    + Body
+        
+            {
+                "links": {
+                    "self": "/activities/42/registration"
+                },
+                "errors":
+                    [
+                        {
+                            "status": "400 Bad Request"
+                        }
+                    ],
+                "meta": {
+                    "documentation": "http://docs.out2move.apiary.io/"
+                }
+            }
 
 + Response 403 (application/json)
 
