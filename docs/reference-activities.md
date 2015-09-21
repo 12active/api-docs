@@ -31,10 +31,10 @@ In the future, there will be endpoints for activities based on location or type.
                 "data": [],
                 "meta": {
                     "endpoints": {
-                        "activity_detail": "/activities/{activity_id}",
-                        "registered_activities": "/users/registrations",
-                        "following_activities": "/users/followings",
-                        "giving_activities": "/users/activities"
+                        "activity_detail": "/api/activities/{activity_id}",
+                        "registered_activities": "/api/users/registrations",
+                        "following_activities": "/api/users/followings",
+                        "giving_activities": "/api/users/activities"
                     }
                 }
             }

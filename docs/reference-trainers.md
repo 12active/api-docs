@@ -20,7 +20,7 @@ Resources for getting information about a trainer.
                 "data": [],
                 "meta": {
                     "endpoints": {
-                        "trainer_detail": "/trainers/{trainer_id}"
+                        "trainer_detail": "/api/trainers/{trainer_id}"
                     }
                 }
             }

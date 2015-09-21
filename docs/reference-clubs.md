@@ -20,7 +20,7 @@ Resources for getting information about a club.
                 "data": [],
                 "meta": {
                     "endpoints": {
-                        "club_detail": "/clubs/{club_id}"
+                        "club_detail": "/api/clubs/{club_id}"
                     }
                 }
             }
@@ -31,6 +31,7 @@ Information about the club of an activity.
 
 + name
 + logo
++ description
 + activities
     + id
 
@@ -52,7 +53,8 @@ Information about the club of an activity.
                     "id": 42,
                     "attributes": {
                         "name": "OUT!-Sport",
-                        "logo": "https://dxltue5g50eu3.cloudfront.net/content/icons/1/logo%20OUT!%20met%20url.png"
+                        "logo": "https://dxltue5g50eu3.cloudfront.net/content/icons/1/logo%20OUT!%20met%20url.png",
+                        "description": "Zoek je een superleuke en goede buitensporttraining voor de laagst mogelijke prijs? Wat jij wilt: ..."
                     },
                     "relationships": {
                         "activities": {

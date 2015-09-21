@@ -191,10 +191,10 @@ Resources for session management and getting information about the currently log
                 "data": [],
                 "meta": {
                     "endpoints": {
-                        "user_detail": "/users/me",
-                        "registered_activities": "/users/registrations",
-                        "following_activities": "/users/followings",
-                        "giving_activities": "/users/activities"
+                        "user_detail": "/api/users/me",
+                        "registered_activities": "/api/users/registrations",
+                        "following_activities": "/api/users/followings",
+                        "giving_activities": "/api/users/activities"
                     }
                 }
             }
@@ -224,6 +224,7 @@ For trainers, this can be extended with:
 + club
     + name
     + logo
+    + description
 
 ### View currently logged in user [GET]
 
@@ -419,10 +420,10 @@ In the future, there will be endpoints for activities based on location or type.
                 "data": [],
                 "meta": {
                     "endpoints": {
-                        "activity_detail": "/activities/{activity_id}",
-                        "registered_activities": "/users/registrations",
-                        "following_activities": "/users/followings",
-                        "giving_activities": "/users/activities"
+                        "activity_detail": "/api/activities/{activity_id}",
+                        "registered_activities": "/api/users/registrations",
+                        "following_activities": "/api/users/followings",
+                        "giving_activities": "/api/users/activities"
                     }
                 }
             }
@@ -873,7 +874,7 @@ Resources for getting information about a trainer.
                 "data": [],
                 "meta": {
                     "endpoints": {
-                        "trainer_detail": "/trainers/{trainer_id}"
+                        "trainer_detail": "/api/trainers/{trainer_id}"
                     }
                 }
             }
@@ -963,7 +964,7 @@ Resources for getting information about a club.
                 "data": [],
                 "meta": {
                     "endpoints": {
-                        "club_detail": "/clubs/{club_id}"
+                        "club_detail": "/api/clubs/{club_id}"
                     }
                 }
             }
@@ -974,6 +975,7 @@ Information about the club of an activity.
 
 + name
 + logo
++ description
 + activities
     + id
 
@@ -995,7 +997,8 @@ Information about the club of an activity.
                     "id": 42,
                     "attributes": {
                         "name": "OUT!-Sport",
-                        "logo": "https://dxltue5g50eu3.cloudfront.net/content/icons/1/logo%20OUT!%20met%20url.png"
+                        "logo": "https://dxltue5g50eu3.cloudfront.net/content/icons/1/logo%20OUT!%20met%20url.png",
+                        "description": "Zoek je een superleuke en goede buitensporttraining voor de laagst mogelijke prijs? Wat jij wilt: ..."
                     },
                     "relationships": {
                         "activities": {
@@ -1354,6 +1357,8 @@ Clients should build an own cache of the (un)read status.
 
 + title
 + starting_date
++ total_message_count
++ last_message_date
 + author
     + name
     + avatar
@@ -1564,6 +1569,7 @@ See [adding a message](/reference/conversations/message-collection) for details.
 + author
     + name
     + avatar
+    + phone
 
 + Parameters
     + conversation_id (required, number, `42`) ... ID of the Conversation
@@ -1642,7 +1648,6 @@ Further it contains a `message_id` and `conversation_id` to redirect users to a 
 + Request (application/json)
 
             {
-                "conversation_id": 42,
                 "message": "Thanks :)",
             }
 

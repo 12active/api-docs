@@ -20,10 +20,10 @@ Resources for session management and getting information about the currently log
                 "data": [],
                 "meta": {
                     "endpoints": {
-                        "user_detail": "/users/me",
-                        "registered_activities": "/users/registrations",
-                        "following_activities": "/users/followings",
-                        "giving_activities": "/users/activities"
+                        "user_detail": "/api/users/me",
+                        "registered_activities": "/api/users/registrations",
+                        "following_activities": "/api/users/followings",
+                        "giving_activities": "/api/users/activities"
                     }
                 }
             }
@@ -53,6 +53,7 @@ For trainers, this can be extended with:
 + club
     + name
     + logo
+    + description
 
 ### View currently logged in user [GET]
 

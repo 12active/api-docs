@@ -22,6 +22,8 @@ Clients should build an own cache of the (un)read status.
 
 + title
 + starting_date
++ total_message_count
++ last_message_date
 + author
     + name
     + avatar
@@ -232,6 +234,7 @@ See [adding a message](/reference/conversations/message-collection) for details.
 + author
     + name
     + avatar
+    + phone
 
 + Parameters
     + conversation_id (required, number, `42`) ... ID of the Conversation
@@ -310,7 +313,6 @@ Further it contains a `message_id` and `conversation_id` to redirect users to a 
 + Request (application/json)
 
             {
-                "conversation_id": 42,
                 "message": "Thanks :)",
             }
 
