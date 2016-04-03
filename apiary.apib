@@ -556,7 +556,8 @@ If `variant` is set to `full`, data contains all elements from the [detail call]
 
 This might include activities given by your club instead of only activities given by you personally.
 
-This only shows activities up to two weeks in the future.
+This only shows activities up to two weeks in the future. You can also pass a `timeperiod` parameter. This can be either `past` or `future` and will return only items of that scope.
+
 
 + title (string)
 + date (in ISO 8601 format)
@@ -670,6 +671,7 @@ An activity object has the following attributes:
     + lat
     + lng
 + category
++ participant_count
 + cancelled
 + description (string)
 + tags ... array of tags
@@ -681,7 +683,7 @@ An activity object has the following attributes:
 + club
     + type
     + id
-+ participants (only for trainers)
++ participants
     + type
     + ids
 
@@ -715,6 +717,7 @@ If subscription is false, a link is provided to the website to arrange payment.
                         },
                         "category": "Crossrunning",
                         "cancelled": false,
+                        "participant_count" : 2,
                         "description": "Trailrunning is harlopen in de natuur. ...",
                         "tags": [
                             "Crossrunning",
