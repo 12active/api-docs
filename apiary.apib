@@ -855,6 +855,60 @@ Make the request without a request body.
 
 + Response 204 (application/json)
 
+
+## Activity cancellation [/activities/{activity_id}/cancellation]
+
+Cancelling an activity means that the activity will cancelled and all members (or participants, depending on the notification settings of your club) will get a message. The activity will be shown as cancelled in all overviews.
+
+C=These notifications come via email and as push notification via a user's device
+(if they [registered for push notifications](/reference/users/user-device).)
+
++ Parameters
+    + activity_id (required, number, `42`) ... ID of the Activity
+
+### Cancel an activity [PUT]
+
+Using PUT cancels the activity, including restoring or reimbursing any payments.
+Make the request without a request body.
+
+Gives a 400 error when the activity can not be cancelled anymore.
+As is the case for already cancelled or past activities.
+This can be prevented by checking the starttime and state before sending a cancellation message.
+
++ Response 204 (application/json)
+
++ Response 400 (application/json)
+
+    + Body
+        
+            {
+                "links": {
+                    "self": "/activities/42/cancellation"
+                },
+                "errors":
+                    [
+                        {
+                            "status": "400 Bad Request",
+                            "title": "De activiteit is al geannuleerd.",
+                            "links": {
+                                "about": "https://www.out2move.nl/activity/view/42"
+                            }
+                        }
+                    ],
+                "meta": {
+                    "documentation": "http://docs.out2move.apiary.io/"
+                }
+            }
+
+### Restore a cancelled activity [DELETE]
+
+Using DELETE restores a cancelled activity, in the (rare?) case a training that was cancelled will be given anyway. This will notify the people who initially signed up, but will NOT automatically register them (while they may have made other plans in the mean time)
+Make the request without a request body.
+
++ Response 204 (application/json)
+
+
+
 # Group Trainers
 
 Resources for getting information about a trainer.
