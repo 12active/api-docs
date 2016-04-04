@@ -202,6 +202,8 @@ Resources for session management and getting information about the currently log
 ## User item [/users/me]
 
 + name
++ first_name
++ last_name
 + avatar
 + phone
 + activities_done
@@ -281,6 +283,8 @@ For trainers, this can be extended with:
                     "id": 42,
                     "attributes": {
                         "name": "Lode Claassen",
+                        "first_name": "Lode",
+                        "last_name": "Claassen",
                         "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
                         "phone": "",
                         "activities_done": 2,
@@ -941,6 +945,8 @@ Resources for getting information about a trainer.
 Information about the trainer of an activity.
 
 + name
++ first_name
++ last_name
 + avatar
 + phone
 + email
@@ -968,7 +974,9 @@ Information about the trainer of an activity.
                     "type": "user",
                     "id": 42,
                     "attributes": {
-                        "name": "Vincent Van den Tol",
+                        "name": "Vincent van den Tol",
+                        "first_name": "Vincent",
+                        "last_name": "van den Tol",
                         "avatar": "https://dxltue5g50eu3.cloudfront.net/content/profile/1/558077f02c968_photo.JPG",
                         "phone": "",
                         "email": "vincent@alsvanzelf.nl",
@@ -1078,6 +1086,8 @@ Information about the club of an activity.
 This is only available for trainers.
 
 + name
++ first_name
++ last_name
 + avatar
 + phone
 + club
@@ -1108,6 +1118,8 @@ This is only available for trainers.
                             "id": 42,
                             "attributes": {
                                 "name": "Lode Claassen",
+                                "first_name" : "Lode",
+                                "last_name" : "Claassen",
                                 "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
                                 "phone": "",
                                 "club": {
@@ -1136,11 +1148,17 @@ POSTing to this endpoint allows the trainer to add a new user as a member.
 The trainer can then register them to the activity and mark their presence.
 
 + emailaddress (string) - Email address of the person
++ first_name (string) - First name of the person
++ last_name (string) - Last name of the person
++ phone (string) - (Mobile) phone number of the person
 
 + Request (application/json)
 
             {
                 "emailaddress": "john@doe.com",
+                "first_name": "John",
+                "last_name": "Doe",
+                "phone": "+316123456789",
             }
 
 + Response 201 (application/json)
@@ -1160,6 +1178,8 @@ The trainer can then register them to the activity and mark their presence.
                     "id": 42,
                     "attributes": {
                         "name": "Lode Claassen",
+                        "first_name" : "Lode",
+                        "last_name" : "Claassen",
                         "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
                         "phone": "",
                         "club": {
@@ -1180,6 +1200,8 @@ The trainer can then register them to the activity and mark their presence.
 ## Club member [/clubs/{club_id}/members/{user_id}]
 
 + name
++ first_name
++ last_name
 + avatar
 + phone
 + club
@@ -1209,6 +1231,8 @@ The trainer can then register them to the activity and mark their presence.
                     "id": 42,
                     "attributes": {
                         "name": "Lode Claassen",
+                        "first_name": "Lode",
+                        "last_name": "Claassen",
                         "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
                         "phone": "",
                         "club": {
@@ -1238,6 +1262,8 @@ Participants can update their own registration for a specific activity via the [
 Lists people who join(ed) an activity.
 
 + name
++ first_name
++ last_name
 + avatar
 + phone
 + activity
@@ -1271,6 +1297,8 @@ Lists people who join(ed) an activity.
                             "id": 42,
                             "attributes": {
                                 "name": "Lode Claassen",
+                                "first_name": "Lode",
+                                "last_name": "Claassen",
                                 "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
                                 "phone": "",
                                 "activity": {
@@ -1296,6 +1324,8 @@ Lists people who join(ed) an activity.
 ## Activity participant [/activities/{activity_id}/participants/{user_id}]
 
 + name
++ first_name
++ last_name
 + avatar
 + phone
 + activity
@@ -1345,6 +1375,8 @@ To get a user id for the request, fetch a list of members via the [club members 
                     "id": 42,
                     "attributes": {
                         "name": "Lode Claassen",
+                        "first_name": "Lode",
+                        "last_name": "Claassen",
                         "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
                         "phone": "",
                         "activity": {
