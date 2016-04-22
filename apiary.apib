@@ -1366,6 +1366,23 @@ To get a user id for the request, fetch a list of members via the [club members 
     + Headers
 
             Location: /activities/42/participants/42
+            
+            
+### Remove a user as participant [DELETE]
+
+Remove a user as a participant of the activity.
+
+This endpoint allows the trainer to unregister a registered participant.
+The participant receive a notification, and payments/bookings will be restored
+
+A trainer can only remove users which are registered to the activity.
+To get a user id for the request, fetch a list of members via the [club members endpoint](/reference/clubs/club-members-collection).
+
++ Response 204 (application/json)
+
+    + Headers
+
+            Location: /activities/42/participants/42
 
 ### View a participant detail [GET]
 
