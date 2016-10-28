@@ -20,6 +20,7 @@ Resources for session management and getting information about the currently log
                 "data": [],
                 "meta": {
                     "endpoints": {
+                        "authenticate": "/api/users/authenticate",
                         "user_detail": "/api/users/me",
                         "registered_activities": "/api/users/registrations",
                         "following_activities": "/api/users/followings",
@@ -27,6 +28,12 @@ Resources for session management and getting information about the currently log
                     }
                 }
             }
+
+## User authenticate [/users/authenticate]
+Authenticate a user and request a JWT token for future requests.
+
+Accepts username/password or a Facebooktoken and validates the credentials. When succesfull returns the current user object, similar to /users/me , with an extra field called 'token'. This field contains the JWT token to user for further authorization.
+
 
 ## User item [/users/me]
 
