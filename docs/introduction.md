@@ -1,14 +1,14 @@
 FORMAT: 1A
 HOST: http://docs.out2move.apiary.io/
 
-# Out2Move
+# Fitmanager
 
-Out2Move offers an API allowing sports trainers an participants
+Fitmanager offers an API allowing sports trainers an participants
 to communicate about sport activities.
 
 The API follows the [json:api syntax](http://jsonapi.org/).
 
-All endpoints share the same base `https://www.out2move.nl/api`.
+All endpoints share the same base `https://club.fitmanager.com/api`.
 
 ### Client identification
 
@@ -27,9 +27,9 @@ By default, it requires the user's username and password.
 The credential is a base 64 encoded string containing `username:password`.
 I.e. `Authorization: Basic c3BvcnR5Z3VydTc4OmxldG1laW4=`.
 
-Users should authenticate via Facebook if they signed up at Out2Move using Facebook.
-Clients are responsible for handling oauth with Facebook using Out2Move provided app info.
-After handling oauth, the user should be checked at Out2Move by sending their oauth access token.
+Users should authenticate via Facebook if they signed up at Fitmanager using Facebook.
+Clients are responsible for handling oauth with Facebook using Fitmanager provided app info.
+After handling oauth, the user should be checked at Fitmanager by sending their oauth access token.
 I.e. `Authorization: Out2MoveFacebookLogin: access_token=xyz`.
 
 Note right now users can only use one login method, either username/password *or* Facebook.
