@@ -8,7 +8,9 @@ to communicate about sport activities.
 
 The API follows the [json:api syntax](http://jsonapi.org/).
 
-All endpoints share the same base `https://www.fitmanager.com/api`.
+
+All endpoints share the same base `https://club.fitmanager.com/api`.
+
 
 ### Client identification
 
@@ -20,23 +22,23 @@ I.e. `GET /users/me?client_id=foo&client_secret=bar`.
 
 ### User authentication
 
-For now, authentication goes via Basic Auth.
-Full authentication is required for every call to the api, there are no session ids.
+User authentication is handled via Basic Auth and JWT. Each call to the api should be sent with a JWT token, there are no session ids.
+The JWT token, can be obtained via a specific authentication API call [/users/authenticate call](/reference/users/user-authenticate) , which accepts the following kinds of login information via the Authorization:Basic header.
 
 By default, it requires the user's username and password.
 The credential is a base 64 encoded string containing `username:password`.
 I.e. `Authorization: Basic c3BvcnR5Z3VydTc4OmxldG1laW4=`.
 
-Users should authenticate via Facebook if they signed up at Out2Move using Facebook.
-Clients are responsible for handling oauth with Facebook using Out2Move provided app info.
-After handling oauth, the user should be checked at Out2Move by sending their oauth access token.
+Users should authenticate via Facebook if they signed up at Fitmanager using Facebook.
+Clients are responsible for handling oauth with Facebook using Fitmanager provided app info.
+After handling oauth, the user should be checked at Fitmanager by sending their oauth access token.
 I.e. `Authorization: Out2MoveFacebookLogin: access_token=xyz`.
 
 Note right now users can only use one login method, either username/password *or* Facebook.
-This depends on how they signed up at Out2Move.
+This depends on how they signed up at Fitmanager.
 
-As full authentication is needed for every call, there is no specific login endpoint.
-Testing for a successful login can be best done using the [/users/me call](/reference/users/user-item).
+When the login information is accepted, the authorization method will return the user details along with a 'token' field. This token fields contains the JWT token that can be used for other request. The JWT token needs to be sent in the Authorization:Bearer header
+I.e. `Authorization: Bearer qwdfsdfsdfsferewrsf34refds...`.
 
 ### Following links
 

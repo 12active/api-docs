@@ -202,6 +202,8 @@ Resources for session management and getting information about the currently log
 ## User item [/users/me]
 
 + name
++ first_name
++ last_name
 + avatar
 + phone
 + activities_done
@@ -281,6 +283,8 @@ For trainers, this can be extended with:
                     "id": 42,
                     "attributes": {
                         "name": "Lode Claassen",
+                        "first_name": "Lode",
+                        "last_name": "Claassen",
                         "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
                         "phone": "",
                         "activities_done": 2,
@@ -556,7 +560,8 @@ If `variant` is set to `full`, data contains all elements from the [detail call]
 
 This might include activities given by your club instead of only activities given by you personally.
 
-This only shows activities up to two weeks in the future.
+This only shows activities up to two weeks in the future. You can also pass a `timeperiod` parameter. This can be either `past` or `future` and will return only items of that scope.
+
 
 + title (string)
 + date (in ISO 8601 format)
@@ -670,6 +675,7 @@ An activity object has the following attributes:
     + lat
     + lng
 + category
++ participant_count
 + cancelled
 + description (string)
 + tags ... array of tags
@@ -681,7 +687,7 @@ An activity object has the following attributes:
 + club
     + type
     + id
-+ participants (only for trainers)
++ participants
     + type
     + ids
 
@@ -715,6 +721,7 @@ If subscription is false, a link is provided to the website to arrange payment.
                         },
                         "category": "Crossrunning",
                         "cancelled": false,
+                        "participant_count" : 2,
                         "description": "Trailrunning is harlopen in de natuur. ...",
                         "tags": [
                             "Crossrunning",
@@ -855,6 +862,60 @@ Make the request without a request body.
 
 + Response 204 (application/json)
 
+
+## Activity cancellation [/activities/{activity_id}/cancellation]
+
+Cancelling an activity means that the activity will cancelled and all members (or participants, depending on the notification settings of your club) will get a message. The activity will be shown as cancelled in all overviews.
+
+C=These notifications come via email and as push notification via a user's device
+(if they [registered for push notifications](/reference/users/user-device).)
+
++ Parameters
+    + activity_id (required, number, `42`) ... ID of the Activity
+
+### Cancel an activity [PUT]
+
+Using PUT cancels the activity, including restoring or reimbursing any payments.
+Make the request without a request body.
+
+Gives a 400 error when the activity can not be cancelled anymore.
+As is the case for already cancelled or past activities.
+This can be prevented by checking the starttime and state before sending a cancellation message.
+
++ Response 204 (application/json)
+
++ Response 400 (application/json)
+
+    + Body
+        
+            {
+                "links": {
+                    "self": "/activities/42/cancellation"
+                },
+                "errors":
+                    [
+                        {
+                            "status": "400 Bad Request",
+                            "title": "De activiteit is al geannuleerd.",
+                            "links": {
+                                "about": "https://www.out2move.nl/activity/view/42"
+                            }
+                        }
+                    ],
+                "meta": {
+                    "documentation": "http://docs.out2move.apiary.io/"
+                }
+            }
+
+### Restore a cancelled activity [DELETE]
+
+Using DELETE restores a cancelled activity, in the (rare?) case a training that was cancelled will be given anyway. This will notify the people who initially signed up, but will NOT automatically register them (while they may have made other plans in the mean time)
+Make the request without a request body.
+
++ Response 204 (application/json)
+
+
+
 # Group Trainers
 
 Resources for getting information about a trainer.
@@ -884,6 +945,8 @@ Resources for getting information about a trainer.
 Information about the trainer of an activity.
 
 + name
++ first_name
++ last_name
 + avatar
 + phone
 + email
@@ -911,7 +974,9 @@ Information about the trainer of an activity.
                     "type": "user",
                     "id": 42,
                     "attributes": {
-                        "name": "Vincent Van den Tol",
+                        "name": "Vincent van den Tol",
+                        "first_name": "Vincent",
+                        "last_name": "van den Tol",
                         "avatar": "https://dxltue5g50eu3.cloudfront.net/content/profile/1/558077f02c968_photo.JPG",
                         "phone": "",
                         "email": "vincent@alsvanzelf.nl",
@@ -976,6 +1041,10 @@ Information about the club of an activity.
 + name
 + logo
 + description
++ website
++ facebook_page
++ email
++ phone
 + activities
     + id
 
@@ -1017,7 +1086,10 @@ Information about the club of an activity.
 This is only available for trainers.
 
 + name
++ first_name
++ last_name
 + avatar
++ emailaddress
 + phone
 + club
     + credit_left
@@ -1047,7 +1119,10 @@ This is only available for trainers.
                             "id": 42,
                             "attributes": {
                                 "name": "Lode Claassen",
+                                "first_name" : "Lode",
+                                "last_name" : "Claassen",
                                 "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                                "emailaddress": "Lode@out2move.nl",
                                 "phone": "",
                                 "club": {
                                     "credit_left": 12,
@@ -1075,11 +1150,17 @@ POSTing to this endpoint allows the trainer to add a new user as a member.
 The trainer can then register them to the activity and mark their presence.
 
 + emailaddress (string) - Email address of the person
++ first_name (string) - First name of the person
++ last_name (string) - Last name of the person
++ phone (string) - (Mobile) phone number of the person
 
 + Request (application/json)
 
             {
                 "emailaddress": "john@doe.com",
+                "first_name": "John",
+                "last_name": "Doe",
+                "phone": "+316123456789",
             }
 
 + Response 201 (application/json)
@@ -1099,6 +1180,8 @@ The trainer can then register them to the activity and mark their presence.
                     "id": 42,
                     "attributes": {
                         "name": "Lode Claassen",
+                        "first_name" : "Lode",
+                        "last_name" : "Claassen",
                         "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
                         "phone": "",
                         "club": {
@@ -1119,7 +1202,10 @@ The trainer can then register them to the activity and mark their presence.
 ## Club member [/clubs/{club_id}/members/{user_id}]
 
 + name
++ first_name
++ last_name
 + avatar
++ emailaddress
 + phone
 + club
     + credit_left
@@ -1148,7 +1234,10 @@ The trainer can then register them to the activity and mark their presence.
                     "id": 42,
                     "attributes": {
                         "name": "Lode Claassen",
+                        "first_name": "Lode",
+                        "last_name": "Claassen",
                         "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                        "emailaddress": "Lode@out2move.nl"
                         "phone": "",
                         "club": {
                             "credit_left": 12,
@@ -1177,7 +1266,10 @@ Participants can update their own registration for a specific activity via the [
 Lists people who join(ed) an activity.
 
 + name
++ first_name
++ last_name
 + avatar
++ emailaddress
 + phone
 + activity
     + status (enum joins|cancelled)
@@ -1210,7 +1302,10 @@ Lists people who join(ed) an activity.
                             "id": 42,
                             "attributes": {
                                 "name": "Lode Claassen",
+                                "first_name": "Lode",
+                                "last_name": "Claassen",
                                 "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                                "emailaddress" : "",
                                 "phone": "",
                                 "activity": {
                                     "status": "joins",
@@ -1235,7 +1330,10 @@ Lists people who join(ed) an activity.
 ## Activity participant [/activities/{activity_id}/participants/{user_id}]
 
 + name
++ first_name
++ last_name
 + avatar
++ emailaddress
 + phone
 + activity
     + status (enum joins|cancelled)
@@ -1268,6 +1366,23 @@ To get a user id for the request, fetch a list of members via the [club members 
     + Headers
 
             Location: /activities/42/participants/42
+            
+            
+### Remove a user as participant [DELETE]
+
+Remove a user as a participant of the activity.
+
+This endpoint allows the trainer to unregister a registered participant.
+The participant receive a notification, and payments/bookings will be restored
+
+A trainer can only remove users which are registered to the activity.
+To get a user id for the request, fetch a list of members via the [club members endpoint](/reference/clubs/club-members-collection).
+
++ Response 204 (application/json)
+
+    + Headers
+
+            Location: /activities/42/participants/42
 
 ### View a participant detail [GET]
 
@@ -1284,7 +1399,10 @@ To get a user id for the request, fetch a list of members via the [club members 
                     "id": 42,
                     "attributes": {
                         "name": "Lode Claassen",
+                        "first_name": "Lode",
+                        "last_name": "Claassen",
                         "avatar": "http://www.out2move.nl/assets/img/icons/anonymous.jpg",
+                        "emailaddress" : "lode@out2move.nl",
                         "phone": "",
                         "activity": {
                             "status": "joins",
