@@ -1,14 +1,14 @@
 FORMAT: 1A
 HOST: http://docs.out2move.apiary.io/
 
-# Out2Move
+# Fitmanager
 
-Out2Move offers an API allowing sports trainers an participants
+Fitmanager offers an API allowing sports trainers an participants
 to communicate about sport activities.
 
 The API follows the [json:api syntax](http://jsonapi.org/).
 
-All endpoints share the same base `https://www.out2move.nl/api`.
+All endpoints share the same base `https://www.fitmanager.com/api`.
 
 ### Client identification
 
